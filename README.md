@@ -144,100 +144,110 @@ JHOC/
 
 ---
 
-## 4. Quick Start
+## 4. Local Installation & Setup
 
 ### 4.1 Prerequisites
 - **Python**: 3.10 or higher
-- **SQLite**: 3.35+ (standard library built-in)
+- **SQLite**: 3.35+ (standard library built-in with WAL support)
 - **Git**: 2.30+
-- **OS**: Windows, macOS, or Linux
+- **OS**: Windows 10/11, macOS, Linux
 
-### 4.2 Installation
-Clone the repository and set up the development environment:
+### 4.2 Clone & Installation Steps
+
+Run in your terminal (PowerShell or Bash):
 
 ```bash
+# 1. Clone repository locally
 git clone https://github.com/Arnabest/Rain_JHOC.git
 cd Rain_JHOC
-python -m pip install -r requirements.txt
-python -m pip install -e .
+
+# 2. Create and activate Python virtual environment (recommended)
+python -m venv .venv
+# Windows PowerShell:
+.venv\Scripts\Activate.ps1
+# Linux / macOS:
+# source .venv/bin/activate
+
+# 3. Install dependencies in editable mode
+pip install -r requirements.txt
+pip install -e .
 ```
+
+### 4.3 Two Local Usage Scenarios
+- **Scenario A: Direct exploration and development inside Rain**:  
+  Open the `Rain_JHOC` root directory directly in your agent IDE (Antigravity IDE recommended).
+- **Scenario B: Provisioning Rain as an external harness onto another project**:  
+  To mount Rain's governance rules and shelf skills onto an existing project codebase, run the automated provisioner:
+  ```powershell
+  python scripts/jhoc_provision.py --target-dir <absolute-path-to-target-project>
+  ```
+  This provisions `.agents/rules/` symlinks and `AGENTS.md` index into the target project without duplicating core files.
 
 ---
 
-## 5. Human Operator Guide (面向人类操作者的使用指南)
+## 5. Model Out-of-the-Box Onboarding (模型开箱自适应与激活步骤)
 
-Rain is designed as an operating harness for autonomous LLMs. In daily development, **humans act as architectural decision-makers and safety gatekeepers, while AI models act as governed execution workers**. Operators do not need to manually configure low-level defenses; the interaction is primarily **conversational and intent-driven**, supplemented by human approval tickets when necessary:
+Rain (JHOC) is architected with an **autonomous self-adaptation and alignment loop**. Once you open the workspace in your IDE, the AI model self-onboards without requiring step-by-step human tutoring.
 
-### 5.1 Three-Step Human-Agent Workflow
+### 5.1 Step 1: Send the Bootstrap Prompt to the Agent
+
+Upon opening your first conversation with the LLM in your IDE or CLI (Antigravity IDE, Claude Code, Codex, DeepSeek), send the following standard activation directive:
+
+> **Bootstrap Prompt (Copy & Paste)**:  
+> ```text
+> You are working within the Rain (JHOC) governance harness. Please immediately read AGENTS.md and docs/runbooks/JHOC_LLM_ONBOARDING_MANUAL.md, run the fast self-test probe, and verify your runtime environment, tool capabilities, and pre-flight gates.
+> ```
+
+### 5.2 Step 2: Autonomous Model Onboarding Loop
+
+Upon receiving the prompt, the agent independently executes a four-phase onboarding sequence behind the scenes:
 
 ```text
-[Human specifies goal] -> [Model runs Kaigong pre-flight gate]
-          |
-          v
-[Model writes code & tests] -> (If high-risk command triggered) -> [Human approves ticket in CLI] -> [Model proceeds]
-          |
-          v
-[Human marks task complete] -> [Model runs Shougong closure gate] -> [Commit & Handoff]
+[1. Constitution Ingestion] -> [2. Readiness Probe] -> [3. Runtime Binding] -> [4. Ready Signal]
 ```
 
-#### Step 1: Launch Task (Pre-Flight)
-In your agent IDE (e.g. Antigravity IDE) chat window, state your development goal in natural language:
-> **Example Human Prompt**:  
-> *"Let's begin today's task: optimize SQLite lease expiry logic. Please run the pre-flight check (`kaigong`) first to inspect the workspace baseline."*
-
-- **What Happens Behind the Scenes**:  
-  The agent reads `.agents/rules/` and triggers the `kaigong` skill, locking the Git baseline commit, validating path boundaries, and proactively clarifying scope and edge cases with the human before touching code.
-
-#### Step 2: Governed Execution & Human Approval (Development)
-The model autonomously reads code, writes tests, and edits files under harness oversight.
-- **Normal Operations**: File edits are protected by `PathGuard` and mutex leases, preventing accidental cross-model overwrites.
-- **High-Risk Command Gating**: If the model needs to run potentially destructive commands (e.g., directory purges, piping deletions, `git reset`), the gate halts execution and alerts the human: `[BLOCK] High-risk gate triggered; created approval ticket <ticket_id>`.
-- **Human Approval**:
-  The human operator verifies the command in a separate CLI terminal and authorizes it:
-  ```powershell
-  # 1. Inspect pending high-risk approval tickets
-  python scripts/jhoc_approve.py list
-
-  # 2. Grant single-use approval (ephemeral 300s TTL)
-  python scripts/jhoc_approve.py approve <ticket_id> --note "Approved single-use cache purge"
-  ```
-  Once approved, reply to the agent: *"Ticket approved, please proceed"*, and the model continues.
-
-#### Step 3: Closure & Handoff (Post-Flight)
-When the task is complete, prompt the model to finalize:
-> **Example Human Prompt**:  
-> *"Development complete. Please run the post-flight closure gate (`shougong`)."*
-
-- **What Happens Behind the Scenes**:  
-  The agent runs `jhoc_shougong.py`, executing the full test suite, auditing character purity (zero emoji), releasing active mutex leases, and outputting a clean handoff summary.
-
----
-
-### 5.2 Multi-Model Collaboration (Human Perspective)
-
-When utilizing multiple model providers (e.g., Gemini, Claude Code, Codex, DeepSeek) for adversarial co-review or pair programming:
-1. **Trigger Co-Review**: Run the red-team review pipeline in your terminal:
+1. **Constitution Ingestion (宪法内化)**:  
+   The model reads [`AGENTS.md`](AGENTS.md) and internalizes the eight core invariants (including Rule 0 Anti-Sycophancy, Rule 5 Local-First Determinism, and Rule 7 Zero-Emoji Discipline);
+2. **Readiness Probe (物理探针自检)**:  
+   The model autonomously runs the environment probe to verify Python runtime, SQLite WAL state machine, PathGuard confinement, and lease storage connectivity:
    ```powershell
-   python scripts/jhoc_run_co_review.py --target src/jhoc/hub/store.py
+   python scripts/jhoc_readiness.py
    ```
-2. **Concurrent Multi-Agent Workspaces**: You can edit code with Antigravity IDE in one window while running Claude Code CLI or Codex in another. The SQLite WAL mutex engine automatically arbitrates write leases, preventing silent file corruption.
+3. **Runtime Binding (客户端身份自绑定)**:  
+   The model detects its client host (Antigravity IDE / Claude Code / Codex / DeepSeek), registers its model handle, and mounts the 7 standardized shelf skills under `.agents/skills/` (`kaigong`, `shougong`, etc.);
+4. **Ready Signal (输出就绪报告)**:  
+   The model returns an onboarding readiness summary in chat, confirms the active Git commit baseline, and stands by in a governed operational state.
+
+> For the comprehensive machine-readable onboarding protocol, refer to: [LLM Automated Onboarding Manual (docs/runbooks/JHOC_LLM_ONBOARDING_MANUAL.md)](docs/runbooks/JHOC_LLM_ONBOARDING_MANUAL.md).
 
 ---
 
-### 5.3 Human Operator Cheat-Sheet
+## 6. Human Approval & Command Cheat-Sheet (人工工单审批与速查表)
+
+When an agent triggers high-risk operations (e.g. directory purges, `git reset`, piped deletions), the gate physically intercepts execution and logs an approval ticket. Human operators can review and authorize it in a separate CLI terminal:
+
+```powershell
+# 1. Inspect pending high-risk approval tickets
+python scripts/jhoc_approve.py list
+
+# 2. Authorize single-use execution (ephemeral 300s TTL)
+python scripts/jhoc_approve.py approve <ticket_id> --note "Approved single-use cache purge"
+```
+
+### Operator Command Cheat-Sheet
 
 | Task | Command | Description |
 | :--- | :--- | :--- |
-| **Pre-Flight Check** | `python scripts/jhoc_kaigong.py "<Task Description>"` | Run manually or triggered automatically by agent |
+| **Model Pre-Flight** | `python scripts/jhoc_kaigong.py "<Task Description>"` | Model invokes automatically; can also run manually |
 | **List Pending Tickets** | `python scripts/jhoc_approve.py list` | View gated high-risk command requests |
 | **Approve Ticket** | `python scripts/jhoc_approve.py approve <ticket_id>` | Grant single-use authorization (300s TTL) |
-| **Post-Flight Closure** | `python scripts/jhoc_shougong.py` | Full regression, purity audit, and lease cleanup |
+| **Model Closure** | `python scripts/jhoc_shougong.py` | Full regression, purity audit, and lease cleanup |
 | **Inspect Audit Metrics** | `python scripts/jhoc_log_stats.py` | View tool invocation stats and gate interception logs |
 | **Run Full Unit Tests** | `python -m unittest discover -s tests` | Execute all 330 standalone test cases |
 
 ---
 
-## 6. Operational Dashboard Example
+## 7. Operational Dashboard Example
 
 Run `jhoc_log_stats.py` to inspect local activity metrics, tool call attributions, and gate interactions:
 
@@ -247,7 +257,7 @@ python scripts/jhoc_log_stats.py
 
 ---
 
-## 7. Verification & Diagnostics
+## 8. Verification & Diagnostics
 
 Developers and researchers can evaluate prototype behavior and boundary conditions using the bundled test suite:
 
@@ -261,7 +271,7 @@ python -m unittest discover -s tests -p "test_*.py"
 
 ---
 
-## 8. Agent Governance Principles Under Exploration (AGENTS.md)
+## 9. Agent Governance Principles Under Exploration (AGENTS.md)
 
 JHOC studies the application of the following behavioral invariants across collaborating agents:
 
@@ -276,7 +286,7 @@ JHOC studies the application of the following behavioral invariants across colla
 
 ---
 
-## 9. Contributors & Acknowledgements
+## 10. Contributors & Acknowledgements
 
 Rain (JHOC) is the collaborative outcome of human-AI pair programming, architectural co-design, and red-team review across multiple frontier model families:
 
@@ -292,7 +302,8 @@ Special thanks to the broader open-source community and generative AI researcher
 
 ---
 
-## 10. License & Community
+## 11. License & Community
 
 Licensed under the **Apache License 2.0**. Contributions, feedback, and architectural discussions from researchers and agent engineers are welcome.
+
 
