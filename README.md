@@ -64,6 +64,8 @@ JHOC structures its experimental exploration into three decoupled planes:
 - **Credential Masking Model (`src/jhoc/guard/vault.py`)**: Explores in-memory secret masking and late egress dereferencing to reduce the likelihood of raw credentials entering model prompts.
 
 ### 2.2 The Coordination Plane Design Intents (Multi-Model Hub)
+> For detailed client configuration, file mutex leases, and IPC setup, see: [Multi-Model Collaboration Guide](docs/runbooks/MULTI_MODEL_COLLABORATION_GUIDE.md)
+
 - **Zero-Network Local IPC (`src/jhoc/hub/store.py`)**: Explores using local SQLite with Write-Ahead Logging (WAL) as an authoritative state store without remote cloud dependencies;
 - **Presence State Machine**: Explores unified liveness and state tracking for multi-agent workflows;
 - **Exclusive Mutex Leases (Bearer Token)**: Investigates using ephemeral random lease tokens to mitigate concurrent file overwrite collisions;

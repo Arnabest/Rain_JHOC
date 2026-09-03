@@ -63,6 +63,8 @@ JHOC 在架构设计上尝试探索三个解耦层面的治理模型：
 - **凭据脱敏与隔离模型 (`src/jhoc/guard/vault.py`)**：探索内存级凭据隔离与出口解引用机制，以减少密钥直接暴露在模型上下文中的风险。
 
 ### 2.2 协同平面设计目的 (Multi-Model Hub Intents)
+> 详细客户端接入配置、互斥租约与信封通信手册请参阅：[多模型协同配置与操作指南](docs/runbooks/MULTI_MODEL_COLLABORATION_GUIDE.md)
+
 - **无网络本地 IPC 探索 (`src/jhoc/hub/store.py`)**：探索利用本地 SQLite WAL（预写式日志）作为多模型协同通信的权威状态源，避免对中心化云服务的依赖；
 - **Presence 活跃状态机**：设计统一的心跳与状态追踪机制，探索多模型多任务协作时的生命周期管理；
 - **排他写租约设计 (Bearer Token Mutex)**：尝试通过动态派发随机 `lease_id` 令牌，探索缓解多模型并发修改同一文件时的写入覆盖与竞态冲突；
