@@ -130,6 +130,7 @@ Clone the repository and install in development mode (or run directly with Pytho
 ```bash
 git clone https://github.com/your-username/JHOC.git
 cd JHOC
+python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
