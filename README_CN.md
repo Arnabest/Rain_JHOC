@@ -5,7 +5,7 @@
 [English](README.md) | [简体中文](README_CN.md)
 
 ```text
-[状态: 实验性科研原型 / DEMO]  [字符纯度: 零 EMOJI 纯净规范]
+[状态: 实验性科研原型 / DEMO]
 [探索目标运行时: ANTIGRAVITY IDE (GEMINI) | CLAUDE CODE | OPENAI CODEX | DEEPSEEK]
 ```
 
@@ -19,6 +19,7 @@
 ## 1. 概述与探索背景
 
 现代大语言模型（LLM）与自主编程智能体（AI Agent）展现出了快速的代码生成能力，但在复杂的代码工程中，无约束的自主执行往往面临以下工程挑战：
+
 - **潜在命令风险**：模型可能因幻觉或误判尝试调用高危或破坏性命令；
 - **自审批与提权隐患**：模型可能绕过外部授权，在同一进程或上下文中自我授权或修改自身安全设定；
 - **多模型并发冲突**：多个不同厂商的智能体在同一代码库并行协作时，容易发生无互斥的文件覆盖与冲突；
@@ -80,6 +81,7 @@ JHOC 在架构设计上尝试探索三个解耦层面的治理模型：
 ```
 
 ### 2.1 管控平面设计目的 (Control Plane Intents)
+
 - **PreToolUse 前置拦截探索 (`scripts/jhoc_hook_gate.py`)**：旨在探索在 IDE 或 CLI 工具执行前实施参数级前置校验的途径；
 - **核心源码防自修改设计 (`mutable_by_agent: false`)**：探索将 `src/jhoc/**` 核心源码树、治理规则与门禁脚本对模型设为只读，以抑制智能体自行修改防御规则的倾向；
 - **高危破坏性操作防御模式**：尝试针对常见的误操作命令（如 `git reset --hard`、递归删除指令、批量管道删除）、底层文件系统原语（`shutil.rmtree`, `os.unlink`）以及脚本编码混淆设计模式匹配规则；
@@ -87,6 +89,7 @@ JHOC 在架构设计上尝试探索三个解耦层面的治理模型：
 - **凭据脱敏与隔离模型 (`src/jhoc/guard/vault.py`)**：探索内存级凭据隔离与出口解引用机制，以减少密钥直接暴露在模型上下文中的风险。
 
 ### 2.2 协同平面设计目的 (Multi-Model Hub Intents)
+>
 > 详细客户端接入配置、互斥租约与信封通信手册请参阅：[多模型协同配置与操作指南](docs/runbooks/MULTI_MODEL_COLLABORATION_GUIDE.md)
 
 - **无网络本地 IPC 探索 (`src/jhoc/hub/store.py`)**：探索利用本地 SQLite WAL（预写式日志）作为多模型协同通信的权威状态源，避免对中心化云服务的依赖；
@@ -95,6 +98,7 @@ JHOC 在架构设计上尝试探索三个解耦层面的治理模型：
 - **跨 Harness 协议抽象**：探索对不同厂商模型客户端（Claude Code、Gemini、Codex 等）的工具调用接口进行归一化映射。
 
 ### 2.3 存证与记忆平面设计目的 (Proof & Memory Intents)
+
 - **五元组 BlackBox 确定性存证原型 (`logs/p19-blackbox.jsonl`)**：探索以 `(USER, SEEN, THINK, TOOL, BACK)` 结构与确定性 SHA-256 哈希链，为工具调用行为提供可供复盘的审计记录；
 - **分层记忆治理设想 (L1/L2/L3)**：探索将智能体记忆划分为常驻规则层、按需货架层与离线归档层的组织范式；
 - **知识拓扑索引探索**：探索通过图谱拓扑关系在解耦环境下为智能体提供上下文召回能力。
@@ -141,12 +145,14 @@ JHOC/
 ## 4. 快速开始
 
 ### 4.1 环境要求
+
 - **Python**: 3.10 或更高版本
 - **SQLite**: 3.35+ (标准库内置)
 - **Git**: 2.30+
 - **操作系统**: Windows / Linux / macOS
 
 ### 4.2 安装与初始化
+
 克隆纯净副本仓库并准备运行环境：
 
 ```bash
@@ -167,6 +173,7 @@ python -m pip install -e .
 ```
 
 ### 5.1 第一步：开工前置自检 (`Kaigong`)
+
 在修改代码前，尝试执行开工检查，确认工作区物理路径、核验字符纯度并记录当前 Git Commit 基准：
 
 ```powershell
@@ -174,21 +181,28 @@ python scripts/jhoc_kaigong.py "功能探索: 验证 SQLite 租约超时回收�
 ```
 
 ### 5.2 第二步：运行时执行与工单流
+
 在任务执行期间：
+
 - 对文件的修改操作受 `PathGuard` 路径规则约束，并尝试通过文件租约机制进行登记；
 - 若触发预设的高危命令规则，系统将生成审批工单供人类审查。
 
 #### 人工工单流设计 (`scripts/jhoc_approve.py`)
+
 当出现潜在高危操作需求时：
+
 1. 门禁系统阻断直接执行，尝试在 `runtime/inbox.db` 中生成工单记录；
 2. 操作员可在独立终端核验申请内容并做出决断：
+
    ```powershell
    python scripts/jhoc_approve.py list
    python scripts/jhoc_approve.py approve <工单ID> --note "操作员确认允许单次执行"
    ```
+
 3. 系统设计为单次消耗机制（300 秒有效期），旨在降低未授权重复调用的风险。
 
 ### 5.3 第三步：出厂收工自检 (`Shougong`)
+
 开发完成后，通过收工脚本统一执行工程检查：
 
 ```powershell
@@ -196,6 +210,7 @@ python scripts/jhoc_shougong.py
 ```
 
 收工脚本依次执行自检逻辑：
+
 1. JSON Schema 契约格式核验；
 2. 执行自动化测试套件进行功能回归；
 3. 检查是否有未提交的代码夹带非 ASCII 表情符号；
