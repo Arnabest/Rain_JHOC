@@ -2,6 +2,8 @@
 
 **Zero-Trust Multi-Model Agent Operating Harness for Autonomous Software Engineering**
 
+[English](README.md) | [简体中文](README_CN.md)
+
 ```text
 [STATUS: EXPERIMENTAL RESEARCH PROTOTYPE / DEMO]  [TESTS: 344/344 100% PASS]  [CHAR-DISCIPLINE: ZERO-EMOJI]
 [SUPPORTED RUNTIMES: ANTIGRAVITY IDE (GEMINI) | CLAUDE CODE | OPENAI CODEX | DEEPSEEK]
