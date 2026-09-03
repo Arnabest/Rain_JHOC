@@ -5,11 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "jhoc"
 version = "0.1.0"
-description = "Local-first JHOC agent harness contracts"
-requires-python = ">=3.11"
+description = "Zero-Trust Multi-Model Agent Operating Harness"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "jsonschema>=4.20.0",
+]
 
 [project.optional-dependencies]
-dev = ["jsonschema>=4.20"]
+security = [
+    "cryptography>=41.0.0",
+]
+dev = [
+    "jsonschema>=4.20.0",
+    "cryptography>=41.0.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

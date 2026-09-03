@@ -1,0 +1,10 @@
+# JHOC Core Dependencies
+# The JHOC runtime engine is designed to be local-first and self-contained,
+# relying primarily on Python 3.10+ standard libraries (sqlite3, hashlib, json, pathlib, etc.).
+
+# Required for JSON Schema contract verification and full unit test suite
+jsonschema>=4.20.0
+
+# Optional: Hardware-bound encrypted credential vault persistence (Fernet)
+# If omitted, Vault gracefully operates in in-memory zero-knowledge isolation mode
+cryptography>=41.0.0
