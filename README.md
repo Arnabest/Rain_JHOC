@@ -29,6 +29,30 @@ Modern autonomous AI coding agents demonstrate rapid generative capabilities, bu
 > **Core Research Hypothesis**: Security and boundary defense should physically reside in an external harness rather than relying on prompt-level self-restraint.  
 > **Design Objective**: To investigate how external gates and deterministic state machines can guide autonomous model behaviors toward bounded, observable, and reproducible boundaries.
 
+### 1.1 Empirical Advantages Discovered in Local Practice
+
+Through extensive single-machine multi-model iterations and adversarial red-team testing, this architecture demonstrated several practical engineering advantages:
+
+1. **Deterministic Physical Interception Over Prompt-Level Reliance**:
+   - Traditional setups rely on System Prompts hoping models will "refrain from dangerous actions", which frequently fail under deep chain-of-thought reasoning or prompt injections;
+   - **Empirical Advantage**: Sinking defense to host-level PreToolUse hook gates ensures that path boundary checks, destructive command blocking, and approval ticketing occur deterministically before OS-level execution.
+
+2. **Zero-Network Local-First Autonomy**:
+   - Avoids the operational overhead of external cloud orchestrators, remote message brokers (e.g., Redis, Kafka), and complex distributed network authentications;
+   - **Empirical Advantage**: The coordination microkernel runs entirely on native Python 3.10+ standard libraries and local SQLite WAL, delivering microsecond IPC responsiveness, full offline capabilities, and resilience against external network failures.
+
+3. **Heterogeneous Multi-Model Coordination & Mutex Protection**:
+   - Solves the friction where different providers (Gemini, Claude, Codex) use fragmented tool signatures and concurrently overwrite each other's code;
+   - **Empirical Advantage**: The gate normalizes disparate tool interfaces while Bearer-tokenized exclusive leases (with automatic TTL expiration) provide a low-overhead mutex model for safe multi-agent co-authoring.
+
+4. **Cryptographic BlackBox Forensics & Accurate Attribution**:
+   - Eliminates the accountability gap where agents fail and operators cannot trace which model invoked what tool at what exact timestamp;
+   - **Empirical Advantage**: Chaining `(USER, SEEN, THINK, TOOL, BACK)` interactions into a deterministic SHA-256 hash log functions like an aircraft flight recorder, establishing a tamper-evident audit trail for every invocation.
+
+5. **Cognitive Gating Against Codebase Inflation**:
+   - Autonomous agents without front-loaded cognitive discipline tend to proliferate sprawling boilerplate, redundant modules, and academic jargon wrappers;
+   - **Empirical Advantage**: Combining anti-sycophancy critical questioning with pre-flight gates and dimensional impact analysis significantly reins in unconstrained codebase expansion.
+
 ---
 
 ## 2. Three Architectural Planes: Design Objectives
