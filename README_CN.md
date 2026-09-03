@@ -159,68 +159,87 @@ JHOC/
 
 ### 4.2 安装与初始化
 
-克隆纯净副本仓库并准备运行环境：
+克隆仓库并准备本地运行环境：
 
 ```bash
-git clone https://github.com/your-username/JHOC.git
-cd JHOC
+git clone https://github.com/Arnabest/Rain_JHOC.git
+cd Rain_JHOC
 python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
 ---
 
-## 5. 工程生命周期流程探索
+## 5. 面向人类操作者的使用指南 (Human Operator Guide)
 
-在 JHOC 体系中，尝试设计一套结构化的协作流程，引导智能体与人类协同工作：
+本项目定位为大模型自主编程的外挂治理微内核。在日常开发中，**人类扮演“架构决策者与安全审批人”，大模型扮演“受管执行工兵”**。人类并不需要手动管理繁琐的底层安全配置，整个协作过程以**“自然语言对话驱动”**为主，辅以必要的人工工单审批：
+
+### 5.1 人类日常开发三步操作流
 
 ```text
-[第一步: 开工 Kaigong] -> [第二步: 运行时门禁与工单流] -> [第三步: 收工 Shougong 闭环]
+[人类下达开工目标] -> [模型自动执行 Kaigong 前置自检]
+      |
+      v
+[模型自主编程与执行] -> (若触升高危指令) -> [人类在终端审批工单] -> [模型获准继续]
+      |
+      v
+[人类通知任务完成] -> [模型自动执行 Shougong 收工复核] -> [提交与归档]
 ```
 
-### 5.1 第一步：开工前置自检 (`Kaigong`)
+#### 步骤一：发起任务（开工阶段）
+在智能体 IDE（如 Antigravity IDE）的对话框中，直接向模型用自然语言下达开发目标：
+> **人类输入示例**：  
+> *“我们开始今天的开发任务：优化 SQLite 租约回收逻辑。请先执行开工自检 (`kaigong`)，梳理当前工作区与基准。”*
 
-在修改代码前，尝试执行开工检查，确认工作区物理路径、核验字符纯度并记录当前 Git Commit 基准：
+- **系统在后台做了什么**：  
+  模型会自动读取 `.agents/rules/` 规则并调用 `kaigong` 技能，完成工作区路径锁定、基准 Git Commit 记录，并在开始写代码前向人类主动反问澄清边界。
 
-```powershell
-python scripts/jhoc_kaigong.py "功能探索: 验证 SQLite 租约超时回收机制"
-```
+#### 步骤二：受管执行与工单审批（开发阶段）
+模型会自主阅读代码、编写测试并修改文件。
+- **常规操作**：文件编辑受 `PathGuard` 路径守卫保护，模型会自动申请排他写租约，杜绝多模型并发覆盖；
+- **高危操作审批**：若模型因排障需要调用高危破坏性命令（如清理目录、底层管道删除、`git reset`），门禁会立即物理拦截，并在对话中告知人类：`[BLOCK] 触发高危门禁，已生成审批工单 ticket-xxx`。
+- **人类操作员审批**：
+  人类在独立的命令行终端中核验并一键放行：
+  ```powershell
+  # 1. 查看当前待审批的高危操作申请
+  python scripts/jhoc_approve.py list
 
-### 5.2 第二步：运行时执行与工单流
+  # 2. 确认安全后批准执行（单次有效，300 秒自动失效）
+  python scripts/jhoc_approve.py approve <工单ID> --note "确认允许清理临时缓存"
+  ```
+  审批通过后，在对话中对模型说：*“工单已批准，请继续执行”*，模型即可单次重试该操作。
 
-在任务执行期间：
+#### 步骤三：出厂验收与收尾（收工阶段）
+任务全部完成后，在对话框中指示模型收尾：
+> **人类输入示例**：  
+> *“本阶段功能已开发完毕，请执行收工闭环检查 (`shougong`)。”*
 
-- 对文件的修改操作受 `PathGuard` 路径规则约束，并尝试通过文件租约机制进行登记；
-- 若触发预设的高危命令规则，系统将生成审批工单供人类审查。
+- **系统在后台做了什么**：  
+  模型自动执行 `jhoc_shougong.py`，跑通全量单元测试、检查代码纯度（零 Emoji）、释放所有文件写租约，并向人类输出交接清单。
 
-#### 人工工单流设计 (`scripts/jhoc_approve.py`)
+---
 
-当出现潜在高危操作需求时：
+### 5.2 多模型协同作业使用方式（人类视角）
 
-1. 门禁系统阻断直接执行，尝试在 `runtime/inbox.db` 中生成工单记录；
-2. 操作员可在独立终端核验申请内容并做出决断：
-
+当需要利用不同厂商模型（如 Gemini、Claude Code、Codex 等）进行对抗协审或结对编程时：
+1. **启动协审流水线**：在终端运行红蓝对抗协审脚本：
    ```powershell
-   python scripts/jhoc_approve.py list
-   python scripts/jhoc_approve.py approve <工单ID> --note "操作员确认允许单次执行"
+   python scripts/jhoc_run_co_review.py --target src/jhoc/hub/store.py
    ```
+2. **多端并行接入**：在一个窗口使用 Antigravity IDE 编写代码，另一个窗口使用 Claude Code CLI 或 Codex 审阅代码。微内核的 SQLite WAL 互斥租约会自动协调写入顺序，防止两端发生静默文件踩踏。
 
-3. 系统设计为单次消耗机制（300 秒有效期），旨在降低未授权重复调用的风险。
+---
 
-### 5.3 第三步：出厂收工自检 (`Shougong`)
+### 5.3 人类操作员常用命令速查表
 
-开发完成后，通过收工脚本统一执行工程检查：
-
-```powershell
-python scripts/jhoc_shougong.py
-```
-
-收工脚本依次执行自检逻辑：
-
-1. JSON Schema 契约格式核验；
-2. 执行自动化测试套件进行功能回归；
-3. 检查是否有未提交的代码夹带非 ASCII 表情符号；
-4. 尝试导出交接状态信息并释放占用的模型租约。
+| 操作需求 | 执行命令 | 说明 |
+| :--- | :--- | :--- |
+| **开工自检** | `python scripts/jhoc_kaigong.py "<任务描述>"` | 模型通常会自动调用，人类也可手动运行 |
+| **查看待审工单** | `python scripts/jhoc_approve.py list` | 查看被门禁拦截的高危操作申请 |
+| **审批放行工单** | `python scripts/jhoc_approve.py approve <工单ID>` | 人类单次授权高危指令执行（300秒内有效） |
+| **收工闭环复核** | `python scripts/jhoc_shougong.py` | 全量自检、单测回归与释放租约 |
+| **查看审计大屏** | `python scripts/jhoc_log_stats.py` | 统计各模型的调用频次、拦截次数与耗时 |
+| **运行全量单测** | `python -m unittest discover -s tests` | 330 项全量自持单测回归验证 |
 
 ---
 

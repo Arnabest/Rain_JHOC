@@ -156,56 +156,84 @@ JHOC/
 Clone the repository and set up the development environment:
 
 ```bash
-git clone https://github.com/your-username/JHOC.git
-cd JHOC
+git clone https://github.com/Arnabest/Rain_JHOC.git
+cd Rain_JHOC
 python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
 ---
 
-## 5. Standard Lifecycle Workflow Exploration
+## 5. Human Operator Guide (面向人类操作者的使用指南)
 
-JHOC proposes a structured, gated lifecycle for human-agent collaboration:
+Rain is designed as an operating harness for autonomous LLMs. In daily development, **humans act as architectural decision-makers and safety gatekeepers, while AI models act as governed execution workers**. Operators do not need to manually configure low-level defenses; the interaction is primarily **conversational and intent-driven**, supplemented by human approval tickets when necessary:
+
+### 5.1 Three-Step Human-Agent Workflow
 
 ```text
-[Step 1: Kaigong] -> [Step 2: Execution & Gating] -> [Step 3: Shougong Closure]
+[Human specifies goal] -> [Model runs Kaigong pre-flight gate]
+          |
+          v
+[Model writes code & tests] -> (If high-risk command triggered) -> [Human approves ticket in CLI] -> [Model proceeds]
+          |
+          v
+[Human marks task complete] -> [Model runs Shougong closure gate] -> [Commit & Handoff]
 ```
 
-### 5.1 Step 1: Pre-Flight Gate (`Kaigong`)
-Before initiating changes, the agent or operator runs a pre-flight probe to verify path boundaries, character purity, and the active Git commit baseline:
+#### Step 1: Launch Task (Pre-Flight)
+In your agent IDE (e.g. Antigravity IDE) chat window, state your development goal in natural language:
+> **Example Human Prompt**:  
+> *"Let's begin today's task: optimize SQLite lease expiry logic. Please run the pre-flight check (`kaigong`) first to inspect the workspace baseline."*
 
-```powershell
-python scripts/jhoc_kaigong.py "Exploration: Evaluate SQLite lease expiry behavior"
-```
+- **What Happens Behind the Scenes**:  
+  The agent reads `.agents/rules/` and triggers the `kaigong` skill, locking the Git baseline commit, validating path boundaries, and proactively clarifying scope and edge cases with the human before touching code.
 
-### 5.2 Step 2: Runtime Execution & Approvals
-During task execution:
-- File write operations are checked against `PathGuard` policies and registered under mutex leases;
-- Commands matching high-risk signatures produce approval tickets for operator review.
+#### Step 2: Governed Execution & Human Approval (Development)
+The model autonomously reads code, writes tests, and edits files under harness oversight.
+- **Normal Operations**: File edits are protected by `PathGuard` and mutex leases, preventing accidental cross-model overwrites.
+- **High-Risk Command Gating**: If the model needs to run potentially destructive commands (e.g., directory purges, piping deletions, `git reset`), the gate halts execution and alerts the human: `[BLOCK] High-risk gate triggered; created approval ticket <ticket_id>`.
+- **Human Approval**:
+  The human operator verifies the command in a separate CLI terminal and authorizes it:
+  ```powershell
+  # 1. Inspect pending high-risk approval tickets
+  python scripts/jhoc_approve.py list
 
-#### Human Approval Flow (`scripts/jhoc_approve.py`)
-When high-risk operations are identified:
-1. The gate halts unprompted execution and creates a ticket in `runtime/inbox.db`;
-2. A human operator reviews and approves the ticket via the CLI:
+  # 2. Grant single-use approval (ephemeral 300s TTL)
+  python scripts/jhoc_approve.py approve <ticket_id> --note "Approved single-use cache purge"
+  ```
+  Once approved, reply to the agent: *"Ticket approved, please proceed"*, and the model continues.
+
+#### Step 3: Closure & Handoff (Post-Flight)
+When the task is complete, prompt the model to finalize:
+> **Example Human Prompt**:  
+> *"Development complete. Please run the post-flight closure gate (`shougong`)."*
+
+- **What Happens Behind the Scenes**:  
+  The agent runs `jhoc_shougong.py`, executing the full test suite, auditing character purity (zero emoji), releasing active mutex leases, and outputting a clean handoff summary.
+
+---
+
+### 5.2 Multi-Model Collaboration (Human Perspective)
+
+When utilizing multiple model providers (e.g., Gemini, Claude Code, Codex, DeepSeek) for adversarial co-review or pair programming:
+1. **Trigger Co-Review**: Run the red-team review pipeline in your terminal:
    ```powershell
-   python scripts/jhoc_approve.py list
-   python scripts/jhoc_approve.py approve <ticket_id> --note "Operator approved single-use execution"
+   python scripts/jhoc_run_co_review.py --target src/jhoc/hub/store.py
    ```
-3. The ticket is consumed as an ephemeral single-use token (300s TTL) to reduce unauthorized re-use.
+2. **Concurrent Multi-Agent Workspaces**: You can edit code with Antigravity IDE in one window while running Claude Code CLI or Codex in another. The SQLite WAL mutex engine automatically arbitrates write leases, preventing silent file corruption.
 
-### 5.3 Step 3: Post-Flight Closure (`Shougong`)
-Upon task completion, the closure script executes the verification pipeline:
+---
 
-```powershell
-python scripts/jhoc_shougong.py
-```
+### 5.3 Human Operator Cheat-Sheet
 
-The script runs:
-1. JSON Schema contract format validation;
-2. Automated test suite regression;
-3. Diff character purity audit for non-ASCII emoji characters;
-4. Handoff artifact generation and lease cleanup.
+| Task | Command | Description |
+| :--- | :--- | :--- |
+| **Pre-Flight Check** | `python scripts/jhoc_kaigong.py "<Task Description>"` | Run manually or triggered automatically by agent |
+| **List Pending Tickets** | `python scripts/jhoc_approve.py list` | View gated high-risk command requests |
+| **Approve Ticket** | `python scripts/jhoc_approve.py approve <ticket_id>` | Grant single-use authorization (300s TTL) |
+| **Post-Flight Closure** | `python scripts/jhoc_shougong.py` | Full regression, purity audit, and lease cleanup |
+| **Inspect Audit Metrics** | `python scripts/jhoc_log_stats.py` | View tool invocation stats and gate interception logs |
+| **Run Full Unit Tests** | `python -m unittest discover -s tests` | Execute all 330 standalone test cases |
 
 ---
 
