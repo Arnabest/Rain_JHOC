@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "jhoc"
 version = "0.1.0"
-description = "Zero-Trust Multi-Model Agent Operating Harness"
+description = "Zero-Trust Context Orchestration Framework for LLM Autonomous Workflows"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }

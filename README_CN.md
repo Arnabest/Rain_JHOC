@@ -1,6 +1,6 @@
 # Rain — 智能体运行微内核 (JHOC / Rain Harness Core)
 
-**面向自主软件工程的零信任多模型外挂操作系统**
+**面向大语言模型自主工作流的零信任上下文编排框架**
 
 [English](README.md) | [简体中文](README_CN.md)
 

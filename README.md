@@ -1,6 +1,6 @@
 # Rain — Agent Operating Harness (JHOC / Rain Core)
 
-**Zero-Trust Multi-Model Agent Operating Harness for Autonomous Software Engineering**
+**Zero-Trust Context Orchestration Framework for LLM Autonomous Workflows**
 
 [English](README.md) | [简体中文](README_CN.md)
 
