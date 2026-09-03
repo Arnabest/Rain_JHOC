@@ -1,4 +1,4 @@
-# Rain — Agent Operating Harness (JHOC / Rain Core)
+# Rain — Agent Operating Harness (Rain / JHOC Harness Core)
 
 **Zero-Trust Context Orchestration Framework for LLM Autonomous Workflows**
 
@@ -13,6 +13,11 @@
 > **PROJECT STATUS: EXPERIMENTAL RESEARCH DEMO (实验性架构演示原型)**  
 > Rain (JHOC) is an **experimental research prototype and architectural demo** exploring the design space of zero-trust harness isolation, multi-agent adversarial co-review, and cryptographic audit ledgers for autonomous coding agents.  
 > It is provided as an open exploration sandbox for developers, AI engineers, and security researchers to study how external harnesses can enforce boundaries on generative models. It is **not** an off-the-shelf commercial enterprise product; contracts, IPC protocols, and lifecycle gates are subject to experimental evolution and do not make absolute security guarantees.
+> 
+> **Runtime Environment & Interaction Modality**:  
+> - **Recommended Environment**: The primary development and execution environment is **recommended to be an agent-centric IDE (the author actively develops within Antigravity IDE)** or agent CLI terminals;  
+> - **No Explicit Frontend Console**: As an operating harness and context orchestration core, **this project does not provide a dedicated visual Web / GUI dashboard**;  
+> - **Interaction Paradigm**: It is **designed to be driven primarily via conversational dialogue with the AI models**, which invoke underlying scripts and governance skills under harness supervision.
 
 ---
 
