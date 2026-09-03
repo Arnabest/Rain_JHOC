@@ -1,6 +1,6 @@
-# AGENTS.md — JHOC Agent 运行与开发宪法
+# AGENTS.md — Rain (JHOC) Agent 运行与开发宪法
 
-欢迎来到 **JHOC (Jian Harness Operating Core)**。所有在此代码库工作的 AI Agent 必须严格遵守以下法则。
+欢迎来到 **Rain (JHOC)**。所有在此代码库工作的 AI Agent 必须严格遵守以下法则。
 
 ---
 

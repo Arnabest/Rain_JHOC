@@ -1,4 +1,4 @@
-# JHOC — Jian Harness Operating Core
+# Rain — Agent Operating Harness (JHOC / Rain Core)
 
 **Zero-Trust Multi-Model Agent Operating Harness for Autonomous Software Engineering**
 
@@ -11,7 +11,7 @@
 
 > [!IMPORTANT]
 > **PROJECT STATUS: EXPERIMENTAL RESEARCH DEMO (实验性架构演示原型)**  
-> JHOC is an **experimental research prototype and architectural demo** exploring the design space of zero-trust harness isolation, multi-agent adversarial co-review, and cryptographic audit ledgers for autonomous coding agents.  
+> Rain (JHOC) is an **experimental research prototype and architectural demo** exploring the design space of zero-trust harness isolation, multi-agent adversarial co-review, and cryptographic audit ledgers for autonomous coding agents.  
 > It is provided as an open exploration sandbox for developers, AI engineers, and security researchers to study how external harnesses can enforce boundaries on generative models. It is **not** an off-the-shelf commercial enterprise product; contracts, IPC protocols, and lifecycle gates are subject to experimental evolution and do not make absolute security guarantees.
 
 ---
@@ -24,7 +24,7 @@ Modern autonomous AI coding agents demonstrate rapid generative capabilities, bu
 - **Multi-Model Write Contention**: Concurrent agents from different providers operating in the same workspace can encounter uncoordinated file overwrites;
 - **Audit Gaps**: Without tamper-evident local logging, reconstructing multi-model tool invocations and causal decision chains can be difficult.
 
-**JHOC (Jian Harness Operating Core)** explores a local-first, zero-trust architectural approach situated between model clients and the host operating system:
+**Rain (JHOC / Rain Core)** explores a local-first, zero-trust architectural approach situated between model clients and the host operating system:
 
 > **Core Research Hypothesis**: Security and boundary defense should physically reside in an external harness rather than relying on prompt-level self-restraint.  
 > **Design Objective**: To investigate how external gates and deterministic state machines can guide autonomous model behaviors toward bounded, observable, and reproducible boundaries.
