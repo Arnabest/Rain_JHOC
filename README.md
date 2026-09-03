@@ -3,9 +3,14 @@
 **Zero-Trust Multi-Model Agent Operating Harness for Autonomous Software Engineering**
 
 ```text
-[STATUS: PRODUCTION-GRADE CONVERGED]  [TESTS: 344/344 100% PASS]  [CHAR-DISCIPLINE: ZERO-EMOJI]
+[STATUS: EXPERIMENTAL RESEARCH PROTOTYPE / DEMO]  [TESTS: 344/344 100% PASS]  [CHAR-DISCIPLINE: ZERO-EMOJI]
 [SUPPORTED RUNTIMES: ANTIGRAVITY IDE (GEMINI) | CLAUDE CODE | OPENAI CODEX | DEEPSEEK]
 ```
+
+> [!IMPORTANT]
+> **PROJECT STATUS: EXPERIMENTAL RESEARCH DEMO (实验性架构演示原型)**  
+> JHOC is an **experimental research prototype and architectural demo** exploring the boundaries of zero-trust harness defense, multi-model adversarial co-review, and cryptographic audit ledgers for autonomous coding agents.  
+> It is designed and open-sourced as an exploratory reference implementation for developers, researchers, and agent engineers to study physical boundary enforcement over autonomous models. It is **not** an off-the-shelf commercial enterprise product; contracts, IPC protocols, and lifecycle gates are subject to experimental evolution.
 
 ---
 
