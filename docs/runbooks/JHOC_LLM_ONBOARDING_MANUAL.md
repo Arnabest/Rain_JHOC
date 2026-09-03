@@ -68,42 +68,42 @@ python G:\JHOC\scripts\jhoc_shougong.py --no-archive
 无论您当前以何种模型或 CLI 身份运行，请对照下表确认自身的全局引导锚定：
 
 ### 1. Antigravity IDE & agy CLI
-- **全局配置**: `C:\Users\arnag\.gemini\config\skills.json`
-- **自动注册**: 该文件已正式注册 `G:/JHOC/.agents/skills`。
+- **全局配置**: `~/.gemini/config/skills.json` (或系统对应 IDE 根目录)
+- **自动注册**: 注册当前项目 `<jhoc-root>/.agents/skills`。
 - **运行特征**: IDE 自动发现全部 7 项货架技能（`kaigong`, `shougong`, `codex-plan-review` 等）；每次调用工具前自动经由 `.agents/hooks.json` 触发 `jhoc_hook_gate.py` 进行零 Emoji 与物理边界防御。
 
 ### 2. Claude Code CLI (`claude`)
-- **全局配置**: `C:\Users\arnag\.claude\CLAUDE.md`
-- **自动注册**: 全局引导已权威锚定 `G:\JHOC\AGENTS.md`。
+- **全局配置**: `~/.claude/CLAUDE.md`
+- **自动注册**: 全局引导锚定目标仓库根目录的 `AGENTS.md`。
 - **机械执行纪律**:
-  - 开工：`python G:\JHOC\scripts\jhoc_kaigong.py --title "<task>"`
-  - 收工：`python G:\JHOC\scripts\jhoc_shougong.py`
+  - 开工：`python scripts/jhoc_kaigong.py --title "<task>"`
+  - 收工：`python scripts/jhoc_shougong.py`
   - 遇到架构变动必须进行 DOWN / UP / FORK 三维影响分析。
 
 ### 3. Codex CLI (`codex`)
-- **全局配置**: `C:\Users\arnag\.codex\AGENTS.md`
-- **自动注册**: 权威来源指向 `G:\JHOC\AGENTS.md` 与 `G:\JHOC\.agents\skills\`。
+- **全局配置**: `~/.codex/AGENTS.md`
+- **自动注册**: 权威来源指向工作区根目录 `AGENTS.md` 与 `.agents/skills/`。
 - **机械执行纪律**: 每次任务启动前必须核对真实物理输出，严禁在未运行命令前声明“修改完成”。
 
 ### 4. DeepSeek Harness (`dsh`)
-- **全局配置**: `C:\Users\arnag\.dsh\settings.yaml`
+- **全局配置**: `~/.dsh/settings.yaml`
 - **自动注册**: 通过本地 Socket RPC (`jhoc_dispatch.py`) 接收脱毒清洗后的不可变 Context 快照包（包含治理规则与强制装配的技能脚手架）。
 
 ---
 
 ## 5. Automated Onboarding for New Workspaces (新项目一键接入协议)
 
-如果您被调度切换至一个全新的代码库（如 `D:\project-alpha`），必须首先执行一行自动化接入装配：
+如果您被调度切换至一个全新的外部代码库（如 `../external-project`），必须首先执行一行自动化接入装配：
 
 ```powershell
-python G:\JHOC\scripts\jhoc_provision.py --target "D:\project-alpha"
+python scripts/jhoc_provision.py --target "../external-project"
 ```
 
 ### 自动化装配完成的物理标准
 1. **`.agents/hooks.json` 部署完成**：挂载 `jhoc_hook_gate.py`，无论用何种编辑器修改代码，均无法写入任何违规 Emoji 或越界路径；
 2. **`AGENTS.md` 部署完成**：显式继承 JHOC 核心宪法与 Rule 0~7；
 3. **`CLAUDE.md` 部署完成**：绑定开工与收工物理校验命令；
-4. **拓扑注册完成**：在 `G:\JHOC\logs\p19-graph.sqlite` 中建立 `project:<slug> -> depends_on -> project:jhoc` 治理依赖关系。
+4. **拓扑注册完成**：在 `logs/p19-graph.sqlite` 中建立 `project:<slug> -> depends_on -> project:jhoc` 治理依赖关系。
 
 ---
 
@@ -142,7 +142,7 @@ python G:\JHOC\scripts\jhoc_provision.py --target "D:\project-alpha"
 | :--- | :--- | :--- | :--- |
 | **`E_EMOJI_VIOLATION`** | 对话输出、Markdown 文档或代码写入中夹带 Emoji 字符 | `jhoc_hook_gate.py` 判定 `deny`；单测直接报红 | 立即清除全部表情字符，使用 `[PASS]`, `[WARN]`, `[FAIL]`, `[INFO]`, `->` 替代 |
 | **`E_BOUNDARY_ESCAPE`** | 尝试向当前工作区根目录之外写入文件 | `PathGuard.evaluate` 拦截；Hook 判定 `deny` | 检查并锁定写入路径必须处于当前工作区范围内 |
-| **`E_REVERSE_ISOLATION`** | 外部子项目 Agent 尝试反向写改中央母核 `G:\JHOC` 源码 | Check 2.7 逆向隔离门禁判定 `deny` | 外部 Agent 严禁修改母核，一切业务改动严格收敛在子项目内部 |
+| **`E_REVERSE_ISOLATION`** | 外部子项目 Agent 尝试反向写改中央母核源码 | Check 2.7 逆向隔离门禁判定 `deny` | 外部 Agent 严禁修改母核，一切业务改动严格收敛在子项目内部 |
 | **`E_DESTRUCTIVE_COMMAND`** | 执行高危破坏性命令 (`Remove-Item -r`, `rd /s`, `shutil.rmtree`, `-enc`, `| del`) | 门禁直接阻断并自动创建审批工单 | 停止盲目重试；必须向操作员出具申请理由并通过 `jhoc_approve.py` 单次放行 |
 | **`E_LIBRARY_SELF_APPROVAL`** | 试图在代码/内存中调用 `inbox.approve()` 伪造操作员身份自批 | 底层抛出 `PermissionError` 物理崩溃 | 严禁自审批，操作员密钥与模型物理隔离 |
 | **`E_MUTEX_CONFLICT`** | 试图修改已被其他模型加锁的文件，或无权释放他人租约 | Multi-Model Hub 拦截；抛出 `File Mutex Conflict` | 等待持有模型的租约超时释放 (TTL=120s)，或协同派发信封申请让渡 |
@@ -156,8 +156,8 @@ python G:\JHOC\scripts\jhoc_provision.py --target "D:\project-alpha"
 
 | 货架技能 Canonical ID | 版本 | 核心用途 (What it solves) | 优先调用方式 (Do NOT Re-invent) |
 | :--- | :--- | :--- | :--- |
-| **`kaigong`** | 2.1.0 | 开工前置工作区路径边界、Git 状态、字符纯度三重核验 | 运行 `python G:\JHOC\scripts\jhoc_kaigong.py --title "..."`，严禁自己手写开工检查脚本 |
-| **`shougong`** | 2.1.0 | 交付前全库单测矩阵、Schema 校验、Git 差异无 Emoji 闭环核验 | 运行 `python G:\JHOC\scripts\jhoc_shougong.py`，严禁随意口头声称完成 |
+| **`kaigong`** | 2.1.0 | 开工前置工作区路径边界、Git 状态、字符纯度三重核验 | 运行 `python scripts/jhoc_kaigong.py --title "..."`，严禁自己手写开工检查脚本 |
+| **`shougong`** | 2.1.0 | 交付前全库单测矩阵、Schema 校验、Git 差异无 Emoji 闭环核验 | 运行 `python scripts/jhoc_shougong.py`，严禁随意口头声称完成 |
 | **`post-task-shared-memory`** | 2.1.0 | 任务收尾跨会话交接、DOWN/UP/FORK 影响分析持久化、普适性错题入库 | 执行该技能标准流更新 `memory/` 与 `docs/lessons/`，严禁自造混乱日志格式 |
 | **`codex-plan-review`** | 1.1.0 | 复杂架构改动、重构前的三维影响路径推演与多模型反向风险对齐 | 挂载该技能骨架输出计划，严禁直接盲目动手改代码 |
 | **`counter-questioning-probe`**| 1.1.0 | 需求模糊或重大任务时从范围、取舍、降级、治理四大维度主动反问 | 引用该探针四大正交维度对齐基准，严禁顺从盲跑 |

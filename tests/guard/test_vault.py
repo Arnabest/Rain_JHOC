@@ -9,7 +9,7 @@ from jhoc.guard.vault import CredentialVault
 class TestCredentialVault(unittest.TestCase):
     def setUp(self) -> None:
         self.vault = CredentialVault()
-        self.secret_val = "sk-live-secret-999888777"
+        self.secret_val = "mock-secret-vault-token-999888777"
         self.token_ref = self.vault.register_secret("deepseek_key", self.secret_val)
 
     def test_register_secret_returns_opaque_token(self) -> None:
