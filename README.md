@@ -29,29 +29,29 @@ Modern autonomous AI coding agents demonstrate rapid generative capabilities, bu
 > **Core Research Hypothesis**: Security and boundary defense should physically reside in an external harness rather than relying on prompt-level self-restraint.  
 > **Design Objective**: To investigate how external gates and deterministic state machines can guide autonomous model behaviors toward bounded, observable, and reproducible boundaries.
 
-### 1.1 Empirical Advantages Discovered in Local Practice
+### 1.1 Empirical Observations from Local Practice
 
-Through extensive single-machine multi-model iterations and adversarial red-team testing, this architecture demonstrated several practical engineering advantages:
+Through ongoing iteration and red-team testing in real single-machine multi-model setups, the prototype has demonstrated several practical observations and relative advantages:
 
-1. **Deterministic Physical Interception Over Prompt-Level Reliance**:
-   - Traditional setups rely on System Prompts hoping models will "refrain from dangerous actions", which frequently fail under deep chain-of-thought reasoning or prompt injections;
-   - **Empirical Advantage**: Sinking defense to host-level PreToolUse hook gates ensures that path boundary checks, destructive command blocking, and approval ticketing occur deterministically before OS-level execution.
+1. **Host-Level Interception Offers Better Practical Controllability than Prompt Restraint**:
+   - Relying on System Prompts hoping models will "refrain from high-risk operations" frequently proves vulnerable to prompt drift or injection during extended reasoning chains;
+   - **Empirical Observation**: Moving checks to a host-level PreToolUse hook prior to actual tool execution provides a more consistent, controllable boundary without having to depend solely on prompt self-discipline.
 
-2. **Zero-Network Local-First Autonomy**:
-   - Avoids the operational overhead of external cloud orchestrators, remote message brokers (e.g., Redis, Kafka), and complex distributed network authentications;
-   - **Empirical Advantage**: The coordination microkernel runs entirely on native Python 3.10+ standard libraries and local SQLite WAL, delivering microsecond IPC responsiveness, full offline capabilities, and resilience against external network failures.
+2. **Local-First Design Reduces External Service Dependencies**:
+   - Compared with heavier architectures that rely on cloud message brokers, remote heartbeat relays, or distributed coordination clusters, local orchestration is considerably leaner;
+   - **Empirical Observation**: Building the coordination hub primarily on Python standard libraries and local SQLite WAL allows the core state machine to function reliably even in offline or air-gapped scenarios, mitigating exposure to network latency and cloud outages.
 
-3. **Heterogeneous Multi-Model Coordination & Mutex Protection**:
-   - Solves the friction where different providers (Gemini, Claude, Codex) use fragmented tool signatures and concurrently overwrite each other's code;
-   - **Empirical Advantage**: The gate normalizes disparate tool interfaces while Bearer-tokenized exclusive leases (with automatic TTL expiration) provide a low-overhead mutex model for safe multi-agent co-authoring.
+3. **Exploring Lightweight Mechanisms to Mitigate Multi-Model Write Contention**:
+   - Disparate client tools (Gemini, Claude Code, Codex) follow different conventions, and uncoordinated concurrent edits often lead to accidental file overwrites;
+   - **Empirical Observation**: Normalizing tool abstractions at the gate and introducing time-bounded exclusive write leases explores an accessible way to minimize concurrent race conditions across diverse models.
 
-4. **Cryptographic BlackBox Forensics & Accurate Attribution**:
-   - Eliminates the accountability gap where agents fail and operators cannot trace which model invoked what tool at what exact timestamp;
-   - **Empirical Advantage**: Chaining `(USER, SEEN, THINK, TOOL, BACK)` interactions into a deterministic SHA-256 hash log functions like an aircraft flight recorder, establishing a tamper-evident audit trail for every invocation.
+4. **Providing Structured Traceability for Forensic Review**:
+   - In multi-agent scenarios without structured auditing, pinpointing which model performed what action at what point in time can be challenging;
+   - **Empirical Observation**: Recording `(USER, SEEN, THINK, TOOL, BACK)` interactions into an append-only SHA-256 chained log offers a coherent, tamper-evident sequence to assist in debugging and operational review.
 
-5. **Cognitive Gating Against Codebase Inflation**:
-   - Autonomous agents without front-loaded cognitive discipline tend to proliferate sprawling boilerplate, redundant modules, and academic jargon wrappers;
-   - **Empirical Advantage**: Combining anti-sycophancy critical questioning with pre-flight gates and dimensional impact analysis significantly reins in unconstrained codebase expansion.
+5. **Guiding Early Convergence to Temper Codebase Bloat**:
+   - Unconstrained autonomous agents often exhibit a tendency to generate redundant scaffolding, speculative abstractions, and unnecessary complexity;
+   - **Empirical Observation**: Coupling pre-flight gates with anti-sycophantic critical questions and dimensional impact analysis helps prompt models to clarify boundaries early, reducing speculative code proliferation.
 
 ---
 
