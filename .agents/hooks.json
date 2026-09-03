@@ -1,0 +1,61 @@
+{
+  "jhoc-gate": {
+    "enabled": true,
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python scripts/jhoc_pre_inject.py",
+        "timeout": 5
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/jhoc_hook_gate.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/jhoc_hook_gate.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "multi_replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/jhoc_hook_gate.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/jhoc_hook_gate.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "python scripts/jhoc_stop_guard.py",
+        "timeout": 5
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jhoc://schemas/intent-decision/1.0",
+  "title": "JHOC Intent Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "decision_id",
+    "intent",
+    "confidence",
+    "tier_hit",
+    "matched_keywords",
+    "banned_tokens",
+    "enforced_scaffolding",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "decision_id": {"type": "string", "format": "uuid"},
+    "intent": {
+      "type": "string",
+      "enum": [
+        "LATENT_SPACE_ACTIVATION",
+        "DETERMINISTIC_ENGINEERING",
+        "SECURITY_AUDIT",
+        "COUNTER_QUESTIONING",
+        "PAPER_DISTILLATION",
+        "PLAN_REVIEW",
+        "KAIGONG",
+        "SHOUGONG",
+        "POST_TASK_MEMORY",
+        "GENERAL_CONVERSATION"
+      ]
+    },
+    "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "tier_hit": {
+      "type": "string",
+      "enum": ["TIER_1_RULE", "TIER_2_METRIC", "TIER_3_LLM_ARBITER", "FALLBACK"]
+    },
+    "matched_keywords": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "banned_tokens": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "enforced_scaffolding": {
+      "anyOf": [{"type": "string"}, {"type": "null"}]
+    },
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

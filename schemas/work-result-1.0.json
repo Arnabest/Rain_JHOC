@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jhoc://schemas/work-result/1.0",
+  "title": "JHOC WorkResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "work_id", "status", "side_effect_state", "output", "evidence_refs", "completed_at", "error_code"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "format": "uuid"},
+    "work_id": {"type": "string", "format": "uuid"},
+    "status": {"enum": ["SUCCEEDED", "FAILED", "CANCELLED", "DEGRADED"]},
+    "side_effect_state": {"enum": ["NOT_APPLICABLE", "SUCCEEDED", "FAILED", "PARTIAL", "UNKNOWN_SIDE_EFFECT", "REQUIRES_RECONCILIATION"]},
+    "output": {"type": "object"},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "error_code": {"anyOf": [{"type": "string"}, {"type": "null"}]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"side_effect_state": {"const": "UNKNOWN_SIDE_EFFECT"}}},
+      "then": {"properties": {"error_code": {"type": "string", "minLength": 1}}}
+    }
+  ]
+}

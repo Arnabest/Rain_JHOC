@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jhoc://schemas/work-item/1.0",
+  "title": "JHOC WorkItem",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "work_id", "kind", "input", "idempotency_key", "priority", "created_at", "deadline_at", "metadata"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "task_id": {"type": "string", "format": "uuid"},
+    "work_id": {"type": "string", "format": "uuid"},
+    "kind": {"type": "string", "minLength": 1},
+    "input": {"type": "object"},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "priority": {"type": "integer", "minimum": 0, "maximum": 100},
+    "created_at": {"type": "string", "format": "date-time"},
+    "deadline_at": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+    "metadata": {"type": "object"}
+  }
+}
+

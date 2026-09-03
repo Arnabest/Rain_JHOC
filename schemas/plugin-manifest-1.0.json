@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jhoc://schemas/plugin-manifest/1.0",
+  "title": "JHOC PluginManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plugin_id", "name", "version", "protocol_version", "plugin_type", "capabilities", "dependencies", "permissions", "side_effects", "resource_requirements", "license", "verification_status", "shelf_eligible", "runtime_selectable", "mutable_by_agent"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "plugin_id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+([+-][0-9A-Za-z.-]+)?$"},
+    "protocol_version": {"type": "string", "minLength": 1},
+    "plugin_type": {"enum": ["capability", "governance", "adapter", "worker"]},
+    "capabilities": {"type": "array", "items": {"type": "string"}},
+    "dependencies": {"type": "array", "items": {"type": "string"}},
+    "permissions": {"type": "object"},
+    "side_effects": {"type": "array", "items": {"type": "string"}},
+    "resource_requirements": {"type": "object"},
+    "license": {"type": "string", "minLength": 1},
+    "verification_status": {"type": "string", "minLength": 1},
+    "shelf_eligible": {"type": "boolean"},
+    "runtime_selectable": {"type": "boolean"},
+    "mutable_by_agent": {"type": "boolean"}
+  },
+  "allOf": [{"if": {"properties": {"plugin_type": {"const": "governance"}}}, "then": {"properties": {"shelf_eligible": {"const": false}, "runtime_selectable": {"const": false}, "mutable_by_agent": {"const": false}}}}]
+}
+
