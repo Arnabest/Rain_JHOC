@@ -248,6 +248,23 @@ JHOC studies the application of the following behavioral invariants across colla
 
 ---
 
-## 9. License & Community
+## 9. Contributors & Acknowledgements
+
+Rain (JHOC) is the collaborative outcome of human-AI pair programming, architectural co-design, and red-team review across multiple frontier model families:
+
+- **Lead Architect & Maintainer**:
+  - **[@Arnabest](https://github.com/Arnabest)** — Project initiator, leading architectural design, heterogeneous model integration, and local engineering practice.
+- **AI Co-Developers & Advisory Models**:
+  - **Antigravity (Google Gemini)**: Microkernel physical gating implementation, zero-data self-sufficiency refactoring, IPC WAL bus design, and lifecycle documentation engineering.
+  - **OpenAI Codex**: Architectural planning and risk review.
+  - **DeepSeek**: Local intent classification gate, core logic implementation, adversarial co-review, and cross-model communication decoupling.
+  - **Grok (xAI)**: Logical vulnerability penetration review and critical adversarial inspection.
+
+Special thanks to the broader open-source community and generative AI researchers for architectural inspiration!
+
+---
+
+## 10. License & Community
 
 Licensed under the **Apache License 2.0**. Contributions, feedback, and architectural discussions from researchers and agent engineers are welcome.
+
