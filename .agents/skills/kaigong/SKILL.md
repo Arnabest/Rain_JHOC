@@ -7,6 +7,7 @@ version: 2.1.0
 category: workflow
 trigger: ["/开工", "开工", "kaigong", "$kaigong", "/kaigong", "开工门禁", "启动任务"]
 when_to_use: ["开始任何编码、调试、重构、配置或架构任务时", "用户输入 /开工 或 开工", "重置任务门禁状态并对齐基准"]
+skill_tier: core
 ---
 
 # /开工 — JHOC 开工前置硬门禁规范

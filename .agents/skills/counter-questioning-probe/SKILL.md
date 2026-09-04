@@ -8,6 +8,7 @@ category: methodology
 trigger: ["counter-questioning-probe", "task-inquiry", "direction-probe", "开工反问", "多角度提问", "方向校准", "需求澄清", "探针提问"]
 when_to_use: ["用户发起新任务或提出新需求，进入规划与执行前", "需求存在多条可行技术路线、架构取舍或未决歧义需要与用户对齐", "复杂任务开工阶段主动生成多角度反问清单与交互式选项", "需要明确最小交付范围(MVP)、异常降级预期与系统联动影响"]
 last_updated: "2026-09-03T18:24:00Z"
+skill_tier: core
 ---
 
 # 多角度开工反问与方向基准探针套件 (Counter-Questioning Probe)

@@ -7,6 +7,7 @@ version: 2.1.0
 category: memory
 trigger: ["post-task-shared-memory", "共享记忆归档", "任务收尾归档", "post task archive", "WUPDT", "落盘记忆"]
 when_to_use: ["任务完成后写最终回复之前的自动记忆持久化", "沉淀新错题或经验教训", "跨会话与跨模型任务交接"]
+skill_tier: core
 ---
 
 # Post-Task Shared Memory — 任务收尾跨模型记忆持久化

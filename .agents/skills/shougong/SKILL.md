@@ -7,6 +7,7 @@ version: 2.1.0
 category: workflow
 trigger: ["/收工", "收工", "shougong", "$shougong", "/shougong", "收工清理", "收工闭环"]
 when_to_use: ["任务开发或重构完成后的最终交付阶段", "用户输入 /收工 或 收工", "复核全局状态并交接未决事项"]
+skill_tier: core
 ---
 
 # /收工 — JHOC 任务收工闭环作业流

@@ -82,7 +82,40 @@ class TestSkillsShelfCompliance(unittest.TestCase):
         self.assertIn("latent-space-activator", content)
         self.assertIn("paper-to-knowledge-distiller", content)
         self.assertIn("token-stats", content)
+        self.assertIn("核心工程与治理技能货架", content)
         self.assertIn("VERIFIED", content)
+
+    def test_tiered_skill_partitioning_compliance(self) -> None:
+        """验证核心工程治理技能与领域业务扩展技能的物理与契约双层隔离"""
+        core_skills = self.loader.discover_core_skills()
+        domain_skills = self.loader.discover_domain_skills()
+
+        # 1. 核心工程与治理技能必须正好 8 项，全部位于 .agents/skills，tier 为 core
+        self.assertEqual(len(core_skills), 8)
+        core_names = {s.name for s in core_skills}
+        expected_core = {
+            "codex-plan-review",
+            "counter-questioning-probe",
+            "latent-space-activator",
+            "paper-to-knowledge-distiller",
+            "kaigong",
+            "shougong",
+            "post-task-shared-memory",
+            "token-stats",
+        }
+        self.assertEqual(core_names, expected_core)
+        for s in core_skills:
+            self.assertEqual(s.skill_tier, "core")
+            self.assertTrue(str(s.path).startswith(str(ROOT / ".agents" / "skills")))
+
+        # 2. 领域业务技能必须位于 .agents/plugins/domain-*/skills，tier 为 domain
+        if domain_skills:
+            self.assertEqual(len(domain_skills), 3)
+            domain_names = {s.name for s in domain_skills}
+            self.assertEqual(domain_names, {"beautiful-article", "content-generative-harness", "web-video-presentation"})
+            for s in domain_skills:
+                self.assertEqual(s.skill_tier, "domain")
+                self.assertIn("plugins", str(s.path))
 
     def test_intent_classifier_routes_to_shelf_skills(self) -> None:
         # 1. Counter Questioning

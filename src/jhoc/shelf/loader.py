@@ -22,35 +22,65 @@ class LoadedSkill:
     when_to_use: tuple[str, ...]
     path: Path
     record: CapabilityRecord
+    skill_tier: str = "core"
 
 
 class SkillShelfLoader:
-    """Discovers, audits, and admits .agents/skills into JHOC Registry and Shelf."""
+    """Discovers, audits, and admits .agents/skills and .agents/plugins/*/skills into JHOC Registry and Shelf."""
 
-    def __init__(self, skills_dir: Path | str | None = None) -> None:
+    def __init__(self, skills_dir: Path | str | None = None, plugins_dir: Path | str | None = None) -> None:
+        root = Path(__file__).resolve().parent.parent.parent.parent / ".agents"
         if skills_dir is None:
-            self.skills_dir = Path(__file__).resolve().parent.parent.parent.parent / ".agents" / "skills"
+            self.skills_dir = root / "skills"
+            default_plugins = root / "plugins"
         else:
             self.skills_dir = Path(skills_dir).resolve()
+            default_plugins = self.skills_dir.parent / "plugins"
 
-    def discover_skills(self) -> tuple[LoadedSkill, ...]:
-        if not self.skills_dir.exists() or not self.skills_dir.is_dir():
-            return ()
+        if plugins_dir is None:
+            self.plugins_dir = default_plugins
+        else:
+            self.plugins_dir = Path(plugins_dir).resolve()
 
+    def discover_skills(self, include_plugins: bool = True) -> tuple[LoadedSkill, ...]:
         loaded: list[LoadedSkill] = []
-        for child in sorted(self.skills_dir.iterdir()):
-            if not child.is_dir():
-                continue
-            skill_md = child / "SKILL.md"
-            if not skill_md.exists() or not skill_md.is_file():
-                continue
+        if self.skills_dir.exists() and self.skills_dir.is_dir():
+            for child in sorted(self.skills_dir.iterdir()):
+                if not child.is_dir():
+                    continue
+                skill_md = child / "SKILL.md"
+                if not skill_md.exists() or not skill_md.is_file():
+                    continue
 
-            skill = self.load_skill(skill_md)
-            loaded.append(skill)
+                skill = self.load_skill(skill_md, default_tier="core")
+                loaded.append(skill)
+
+        if include_plugins and self.plugins_dir.exists() and self.plugins_dir.is_dir():
+            for plugin in sorted(self.plugins_dir.iterdir()):
+                if not plugin.is_dir():
+                    continue
+                skills_subdir = plugin / "skills"
+                if not skills_subdir.is_dir():
+                    continue
+                for child in sorted(skills_subdir.iterdir()):
+                    if not child.is_dir():
+                        continue
+                    skill_md = child / "SKILL.md"
+                    if not skill_md.exists() or not skill_md.is_file():
+                        continue
+
+                    skill = self.load_skill(skill_md, default_tier="domain")
+                    loaded.append(skill)
 
         return tuple(loaded)
 
-    def load_skill(self, skill_md_path: Path) -> LoadedSkill:
+    def discover_core_skills(self) -> tuple[LoadedSkill, ...]:
+        return tuple(s for s in self.discover_skills(include_plugins=False) if s.skill_tier == "core")
+
+    def discover_domain_skills(self) -> tuple[LoadedSkill, ...]:
+        return tuple(s for s in self.discover_skills(include_plugins=True) if s.skill_tier == "domain")
+
+    def load_skill(self, skill_md_path: Path, default_tier: str = "core") -> LoadedSkill:
         content = skill_md_path.read_text(encoding="utf-8")
         frontmatter = self._parse_frontmatter(content)
 
@@ -58,6 +88,7 @@ class SkillShelfLoader:
         version = str(frontmatter.get("version", "1.0.0")).strip()
         category = str(frontmatter.get("category", "methodology")).strip()
         description = str(frontmatter.get("description", "")).strip()
+        skill_tier = str(frontmatter.get("skill_tier") or default_tier).strip()
 
         raw_triggers = frontmatter.get("trigger") or frontmatter.get("triggers") or ()
         if isinstance(raw_triggers, str):
@@ -112,10 +143,11 @@ class SkillShelfLoader:
             when_to_use=when_to_use,
             path=skill_md_path,
             record=record,
+            skill_tier=skill_tier,
         )
 
-    def sync_to_shelf(self, registry: CapabilityRegistry, shelf: Shelf) -> tuple[ShelfEntry, ...]:
-        skills = self.discover_skills()
+    def sync_to_shelf(self, registry: CapabilityRegistry, shelf: Shelf, include_plugins: bool = True) -> tuple[ShelfEntry, ...]:
+        skills = self.discover_skills(include_plugins=include_plugins)
         admitted: list[ShelfEntry] = []
         for s in skills:
             try:
@@ -128,30 +160,52 @@ class SkillShelfLoader:
         return tuple(admitted)
 
     def generate_shelf_markdown(self) -> str:
-        skills = self.discover_skills()
+        core_skills = self.discover_core_skills()
+        domain_skills = self.discover_domain_skills()
+        total_count = len(core_skills) + len(domain_skills)
+
         lines: list[str] = [
             "# JHOC 技能货架权威总目录 (Skill Shelf Ledger)",
             "",
             "> **Authority**: Governed under [`ADR-0009-registry-shelf-quota.md`](file:///g:/JHOC/docs/adr/ADR-0009-registry-shelf-quota.md) 与 [`src/jhoc/shelf/`](file:///g:/JHOC/src/jhoc/shelf/)",
-            f"> **准入技能总数**: {len(skills)} 项 | **状态**: 全部 VERIFIED & SHELF_ELIGIBLE",
+            f"> **技能总数**: {total_count} 项 (核心工程治理: {len(core_skills)} 项 | 领域业务扩展: {len(domain_skills)} 项) | **状态**: 全部 VERIFIED & SHELF_ELIGIBLE",
             "",
             "---",
             "",
-            "| 技能 Canonical ID | 版本 | 分类 | 触发特征 / Aliases | 准入状态 | 对应文件 |",
-            "| :--- | :--- | :--- | :--- | :--- | :--- |",
+            "## 一、 核心工程与治理技能货架 (Core Governance & Engineering Shelf)",
+            "> **物理空间**: `.agents/skills/` | **定位**: 框架微内核生命周期内置常驻能力，严禁动态剥离，随微内核发行。",
+            "",
+            "| 技能 Canonical ID | 层级 | 版本 | 分类 | 触发特征 / Aliases | 准入状态 | 对应文件 |",
+            "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
         ]
-        for s in skills:
+        for s in core_skills:
             trig_str = ", ".join(f"`{t}`" for t in s.triggers[:3])
-            rel_path = s.path.relative_to(self.skills_dir.parent.parent)
-            lines.append(f"| `{s.name}` | `{s.version}` | `{s.category}` | {trig_str} | `VERIFIED` | [{s.name}]({rel_path.as_posix()}) |")
+            rel_path = s.path.relative_to(self.skills_dir)
+            lines.append(f"| `{s.name}` | `core` | `{s.version}` | `{s.category}` | {trig_str} | `VERIFIED` | [{s.name}]({rel_path.as_posix()}) |")
+
+        if domain_skills:
+            lines.extend([
+                "",
+                "---",
+                "",
+                "## 二、 领域与业务扩展插件货架 (Domain & Business Plugin Shelf)",
+                "> **物理空间**: `.agents/plugins/domain-content/skills/` | **定位**: 业务领域专用扩展包，按需热插拔，不随微内核发行。",
+                "",
+                "| 技能 Canonical ID | 层级 | 版本 | 分类 | 触发特征 / Aliases | 准入状态 | 对应文件 |",
+                "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
+            ])
+            for s in domain_skills:
+                trig_str = ", ".join(f"`{t}`" for t in s.triggers[:3])
+                rel_path = Path("..") / s.path.relative_to(self.skills_dir.parent)
+                lines.append(f"| `{s.name}` | `domain` | `{s.version}` | `{s.category}` | {trig_str} | `VERIFIED` | [{s.name}]({rel_path.as_posix()}) |")
 
         lines.extend([
             "",
             "---",
             "",
             "## 货架上架硬契约与门禁",
-            "1. **禁止裸露文件存在**：`.agents/skills/` 目录下任何未在此货架登记的技能，在自动化合规测试中均判定为 `E_UNADMITTED_SKILL` 阻断！",
-            "2. **单一事实源**：每个技能必须具备合法的 YAML Frontmatter 与只读不可变标志 (`mutable_by_agent: false`)。",
+            "1. **禁止裸露文件存在**：`.agents/skills/` 目录下任何未在核心货架登记的技能，在自动化合规测试中均判定为 `E_UNADMITTED_SKILL` 阻断！",
+            "2. **单一事实源**：每个技能必须具备合法的 YAML Frontmatter、强类型 `skill_tier` 与只读不可变标志 (`mutable_by_agent: false`)。",
             "3. **意图调度联动**：所有上架技能必须与 `src/jhoc/intent/classifier.py` 建立特征绑定，支持程序化自动装配。",
             "",
         ])

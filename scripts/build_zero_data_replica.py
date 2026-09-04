@@ -35,6 +35,7 @@ EXCLUDE_DIRS = {
     "acceptance",
     # Task-generated research materials and content-generation skills
     "research",
+    "domain-content",
     "beautiful-article",
     "web-video-presentation",
     "content-generative-harness",
@@ -247,19 +248,14 @@ def build_replica(commit_msg: str | None = None, push: bool = False) -> int:
 
     # 2.6 Clean SHELF.md in clean replica to match 8 core harness skills
     clean_shelf_md = TARGET_ROOT / ".agents" / "skills" / "SHELF.md"
-    if clean_shelf_md.exists():
-        shelf_txt = clean_shelf_md.read_text(encoding="utf-8")
-        cleaned_lines = []
-        for line in shelf_txt.splitlines():
-            if any(k in line for k in ["beautiful-article", "web-video-presentation", "content-generative-harness"]):
-                if line.strip().startswith("| `"):
-                    continue
-                line = line.replace(", content-generative-harness", "").replace(", web-video-presentation", "").replace(", beautiful-article", "")
-            cleaned_lines.append(line)
-        cleaned_shelf_content = "\n".join(cleaned_lines)
-        cleaned_shelf_content = cleaned_shelf_content.replace("准入技能总数**: 11 项", "准入技能总数**: 8 项")
-        clean_shelf_md.write_text(cleaned_shelf_content, encoding="utf-8")
-        print("[PASS] Synchronized SHELF.md in clean replica to 8 core harness skills.")
+    try:
+        sys.path.insert(0, str(TARGET_ROOT / "src"))
+        from jhoc.shelf import SkillShelfLoader
+        loader = SkillShelfLoader(skills_dir=TARGET_ROOT / ".agents" / "skills", plugins_dir=TARGET_ROOT / ".agents" / "plugins")
+        clean_shelf_md.write_text(loader.generate_shelf_markdown(), encoding="utf-8")
+        print("[PASS] Regenerated clean SHELF.md for microkernel release.")
+    except Exception as e:
+        print(f"[WARN] Failed to regenerate SHELF.md via loader: {e}")
 
     # 3. Write battle-hardened .gitignore
     gitignore_file = TARGET_ROOT / ".gitignore"

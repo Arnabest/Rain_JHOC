@@ -7,6 +7,7 @@ version: 1.1.0
 category: collaboration
 trigger: ["codex-plan-review", "plan-review", "规划复核", "方案评审", "架构对齐", "对齐计划"]
 when_to_use: ["复杂架构设计或大重构前对齐方案", "多模型协同或自审中审定执行步骤", "评估破坏性改动风险与 DOWN/UP/FORK 影响路径"]
+skill_tier: core
 ---
 
 # 方案规划评审与风险对齐技能 (codex-plan-review)

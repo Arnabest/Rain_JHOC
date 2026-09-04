@@ -11,6 +11,7 @@ description: >-
   architectural breakthroughs, breaking out of conventional technical clichés or
   deadlocks, cross-disciplinary analogies (e.g., biology, physics, control theory
   to computer systems), or wants first-principles structural models with executable code.
+skill_tier: core
 ---
 
 # 潜空间跨界激活器 (Latent Space Activator)

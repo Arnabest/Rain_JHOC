@@ -7,6 +7,7 @@ version: 1.1.0
 category: methodology
 trigger: ["paper-to-knowledge-distiller", "paper-distiller", "论文研读", "研读论文", "学术提炼", "学习论文", "paper study", "论文去包装"]
 when_to_use: ["接收到前沿学术论文（PDF/ArXiv）需要快速研读与提炼架构", "需要识别论文中是否存在学术名词通胀、虚浮包装与自指实验", "提取论文中的核心公式与代码实现路径并沉淀至本地工程"]
+skill_tier: core
 ---
 
 # 前沿论文研读与知识提炼套件 (paper-to-knowledge-distiller)

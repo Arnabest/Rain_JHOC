@@ -7,6 +7,7 @@ version: 2.1.0
 category: governance
 trigger: ["token-stats", "token_stats", "/token_stats", "额度查询", "账户配额", "配额检测", "token统计", "配额统计"]
 when_to_use: ["需要查询当前窗口绑定账户的 5H/Weekly 实时配额与重置倒计时", "开工前评估当前账号余量是否充足", "任务执行过程中进行阶段性配额巡检", "配额 <= 8% 时指导安全熔断与跨模型/跨账号接力"]
+skill_tier: core
 ---
 
 # Token Stats - JHOC 账户配额实时检测与 8% 临界交接规范
