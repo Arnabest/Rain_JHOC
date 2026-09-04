@@ -33,6 +33,11 @@ EXCLUDE_DIRS = {
     "migration",
     "session",
     "acceptance",
+    # Task-generated research materials and content-generation skills
+    "research",
+    "beautiful-article",
+    "web-video-presentation",
+    "content-generative-harness",
 }
 
 EXCLUDE_EXTENSIONS = {
@@ -51,6 +56,10 @@ EXCLUDE_FILENAMES = {
     "write_freeze.lock",
     "$null",
     "codex_review_r4.txt",
+    # Task-specific batch research scripts
+    "batch_download_papers.py",
+    "batch_transcribe_videos.py",
+    "deep_read_paper_vs_video.py",
 }
 
 GITIGNORE_CONTENT = """# Python
@@ -143,14 +152,24 @@ def handle_remove_readonly(func, path, exc):
         pass
 
 
-def build_replica() -> int:
+def build_replica(commit_msg: str | None = None, push: bool = False) -> int:
     print(f"=== [BUILDING JHOC ZERO-DATA REPLICA] ===")
     print(f"[INFO] Source Root: {SOURCE_ROOT}")
     print(f"[INFO] Target Root: {TARGET_ROOT}")
 
+    has_git = (TARGET_ROOT / ".git").is_dir()
     if TARGET_ROOT.exists():
-        print(f"[INFO] Cleaning existing target directory: {TARGET_ROOT}")
-        shutil.rmtree(TARGET_ROOT, onexc=handle_remove_readonly)
+        print(f"[INFO] Synchronizing clean target directory: {TARGET_ROOT}")
+        for p in TARGET_ROOT.iterdir():
+            if p.name == ".git":
+                continue
+            if p.is_dir():
+                shutil.rmtree(p, onexc=handle_remove_readonly)
+            else:
+                try:
+                    p.unlink()
+                except Exception:
+                    pass
 
     TARGET_ROOT.mkdir(parents=True, exist_ok=True)
 
@@ -226,6 +245,22 @@ def build_replica() -> int:
     (taxonomy_dir / "jhoc-memory-taxonomy-catalog.json").write_text(json.dumps(clean_catalog, indent=2, ensure_ascii=True), encoding="utf-8")
     print("[PASS] Generated clean minimal taxonomy catalog template (zero legacy records).")
 
+    # 2.6 Clean SHELF.md in clean replica to match 8 core harness skills
+    clean_shelf_md = TARGET_ROOT / ".agents" / "skills" / "SHELF.md"
+    if clean_shelf_md.exists():
+        shelf_txt = clean_shelf_md.read_text(encoding="utf-8")
+        cleaned_lines = []
+        for line in shelf_txt.splitlines():
+            if any(k in line for k in ["beautiful-article", "web-video-presentation", "content-generative-harness"]):
+                if line.strip().startswith("| `"):
+                    continue
+                line = line.replace(", content-generative-harness", "").replace(", web-video-presentation", "").replace(", beautiful-article", "")
+            cleaned_lines.append(line)
+        cleaned_shelf_content = "\n".join(cleaned_lines)
+        cleaned_shelf_content = cleaned_shelf_content.replace("准入技能总数**: 11 项", "准入技能总数**: 8 项")
+        clean_shelf_md.write_text(cleaned_shelf_content, encoding="utf-8")
+        print("[PASS] Synchronized SHELF.md in clean replica to 8 core harness skills.")
+
     # 3. Write battle-hardened .gitignore
     gitignore_file = TARGET_ROOT / ".gitignore"
     gitignore_file.write_text(GITIGNORE_CONTENT.strip() + "\n", encoding="utf-8")
@@ -242,7 +277,7 @@ def build_replica() -> int:
         return 1
     print("[PASS] Schema validation passed.")
 
-    print("[CHECK] Running 344 Unit Tests in clean replica...")
+    print("[CHECK] Running 353 Unit Tests in clean replica...")
     r2 = subprocess.run([py_bin, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
     if r2.returncode != 0:
         print(f"[FAIL] Unit tests failed in replica:\n{r2.stderr or r2.stdout}")
@@ -271,26 +306,51 @@ def build_replica() -> int:
         shutil.rmtree(audit_dir)
     print("[PASS] Transient test runtime files purged.")
 
-    # 5. Initialize fresh Git repository
-    print("\n=== [INITIALIZING CLEAN GIT REPOSITORY] ===")
-    subprocess.run(["git", "init", "-b", "main"], cwd=str(TARGET_ROOT), check=True)
-    subprocess.run(["git", "config", "user.name", "JHOC Contributor"], cwd=str(TARGET_ROOT), check=True)
-    subprocess.run(["git", "config", "user.email", "jhoc@localhost"], cwd=str(TARGET_ROOT), check=True)
+    # 5. Git repository commit
+    print("\n=== [COMMITTING TO GIT REPOSITORY] ===")
+    if not has_git:
+        subprocess.run(["git", "init", "-b", "main"], cwd=str(TARGET_ROOT), check=True)
+        subprocess.run(["git", "config", "user.name", "JHOC Contributor"], cwd=str(TARGET_ROOT), check=True)
+        subprocess.run(["git", "config", "user.email", "jhoc@localhost"], cwd=str(TARGET_ROOT), check=True)
     subprocess.run(["git", "add", "."], cwd=str(TARGET_ROOT), check=True)
-    subprocess.run(["git", "commit", "-m", "feat: initial release of JHOC zero-data pure governance microkernel"], cwd=str(TARGET_ROOT), check=True)
-    print("[PASS] Initial clean commit created.")
+    diff_check = subprocess.run(["git", "diff", "--cached", "--name-only"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+    if diff_check.stdout.strip():
+        final_msg = commit_msg or "feat: synchronize clean replica with updated research knowledgebase and skills"
+        subprocess.run(["git", "commit", "-m", final_msg], cwd=str(TARGET_ROOT), check=True)
+        print(f"[PASS] Clean commit created: {final_msg}")
+    else:
+        print("[INFO] Working tree clean, no changes to commit.")
+
+    if push:
+        print("\n=== [PUSHING TO GITHUB] ===")
+        push_res = subprocess.run(["git", "push", "origin", "main"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+        if push_res.returncode != 0:
+            print(f"[FAIL] Git push failed:\n{push_res.stderr or push_res.stdout}")
+            return 1
+        print("[PASS] Successfully pushed clean replica to GitHub (origin/main).")
 
     print("\n======================================================================")
     print("      JHOC ZERO-DATA REPLICA READY FOR GITHUB UPLOAD                   ")
     print("======================================================================")
     print(f"Location: {TARGET_ROOT}")
-    print("To push to GitHub, run:")
-    print(f"  cd \"{TARGET_ROOT}\"")
-    print("  git remote add origin <YOUR_GITHUB_REPO_URL>")
-    print("  git push -u origin main")
+    if not push:
+        print("To push to GitHub, run:")
+        print(f"  cd \"{TARGET_ROOT}\"")
+        print("  git push origin main")
     print("======================================================================")
     return 0
 
 
+def main() -> int:
+    import argparse
+    parser = argparse.ArgumentParser(description="JHOC Zero-Data Clean Replica Generator & Publisher")
+    parser.add_argument("-m", "--message", type=str, default=None, help="Custom git commit message for the replica")
+    parser.add_argument("--push", action="store_true", help="Automatically push to GitHub origin main after clean verification")
+    args = parser.parse_args()
+
+    return build_replica(commit_msg=args.message, push=args.push)
+
+
 if __name__ == "__main__":
-    sys.exit(build_replica())
+    sys.exit(main())
+

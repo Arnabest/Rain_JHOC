@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-import unittest
 from pathlib import Path
+import sys
+import unittest
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT / "src"))
 
 from jhoc.contracts.models import PluginType
 from jhoc.intent.classifier import IntentClassifier
 from jhoc.intent.schema import DetectionTier, IntentType
 from jhoc.registry import CapabilityRegistry, VerificationStatus
 from jhoc.shelf import SkillShelfLoader, SQLiteShelf
-
-ROOT = Path(__file__).resolve().parent.parent
 
 
 class TestSkillsShelfCompliance(unittest.TestCase):
@@ -31,6 +34,7 @@ class TestSkillsShelfCompliance(unittest.TestCase):
             "kaigong",
             "shougong",
             "post-task-shared-memory",
+            "token-stats",
         }
         self.assertTrue(expected_core.issubset(skill_names), f"Missing core skills: {expected_core - skill_names}")
 
@@ -56,7 +60,7 @@ class TestSkillsShelfCompliance(unittest.TestCase):
         shelf = SQLiteShelf(str(test_db))
         try:
             admitted = self.loader.sync_to_shelf(registry, shelf)
-            self.assertGreaterEqual(len(admitted), 7)
+            self.assertGreaterEqual(len(admitted), 8)
 
             # Assert all admitted entries are queryable
             shelf_entries = shelf.entries()
@@ -77,6 +81,7 @@ class TestSkillsShelfCompliance(unittest.TestCase):
         self.assertIn("counter-questioning-probe", content)
         self.assertIn("latent-space-activator", content)
         self.assertIn("paper-to-knowledge-distiller", content)
+        self.assertIn("token-stats", content)
         self.assertIn("VERIFIED", content)
 
     def test_intent_classifier_routes_to_shelf_skills(self) -> None:
@@ -121,6 +126,12 @@ class TestSkillsShelfCompliance(unittest.TestCase):
         self.assertEqual(res7.intent, IntentType.POST_TASK_MEMORY)
         self.assertEqual(res7.tier_hit, DetectionTier.TIER_1_RULE)
         self.assertIn("post-task-shared-memory", str(res7.enforced_scaffolding))
+
+        # 8. Token Stats
+        res8 = self.classifier.classify("查询当前账户配额和token统计")
+        self.assertEqual(res8.intent, IntentType.TOKEN_STATS)
+        self.assertEqual(res8.tier_hit, DetectionTier.TIER_1_RULE)
+        self.assertIn("token-stats", str(res8.enforced_scaffolding))
 
     # =========================================================================
     # 可证伪反例与异常攻防测试 (Falsifiable Counterexample & Negative Tests)

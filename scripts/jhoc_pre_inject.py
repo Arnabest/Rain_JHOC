@@ -9,7 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def evaluate_pre_invocation(payload: dict) -> dict:
+def evaluate_pre_invocation(payload: dict, check_quota: bool = False) -> dict:
     steps: list[dict] = []
     state_file = ROOT / "memory" / "v3_task_state.json"
 
@@ -29,6 +29,31 @@ def evaluate_pre_invocation(payload: dict) -> dict:
         except Exception:
             pass
 
+    if check_quota and not payload.get("skip_quota_check"):
+        try:
+            if str(ROOT / "src") not in sys.path:
+                sys.path.insert(0, str(ROOT / "src"))
+            from jhoc.quota.antigravity_quota import evaluate_quota_alert, get_antigravity_quota_live
+
+            sid = payload.get("session_id")
+            if not sid:
+                brain = Path.home() / ".gemini" / "antigravity-ide" / "brain"
+                if brain.is_dir():
+                    cand = sorted(brain.glob("*/.system_generated/logs/transcript.jsonl"), key=lambda f: f.stat().st_mtime, reverse=True)
+                    if cand:
+                        sid = cand[0].parent.parent.parent.name
+
+            quota_data = get_antigravity_quota_live(session_id=sid)
+            alert = evaluate_quota_alert(quota_data, threshold_pct=8.0)
+            if alert.is_critical:
+                quota_msg = (
+                    f"[CRITICAL QUOTA ALERT] 当前账户 '{alert.account_email}' 配额已低于 8% 临界阈值 (告急项: {', '.join(alert.critical_buckets)})！"
+                    "根据 token-stats 契约：请立即物理落盘改动、沉淀 handoff 与任务记忆，准备跨模型/跨账号交接。"
+                )
+                steps.append({"ephemeralMessage": quota_msg})
+        except Exception:
+            pass
+
     return {"injectSteps": steps}
 
 
@@ -39,9 +64,10 @@ def main() -> None:
     except Exception:
         payload = {}
 
-    res = evaluate_pre_invocation(payload)
+    res = evaluate_pre_invocation(payload, check_quota=True)
     print(json.dumps(res, ensure_ascii=True))
 
 
 if __name__ == "__main__":
     main()
+

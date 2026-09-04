@@ -147,6 +147,33 @@ def run_shougong(archive: bool = True, force: bool = False) -> int:
             state["closed_at"] = now_iso
             state_file.write_text(json.dumps(state, indent=2, ensure_ascii=True), encoding="utf-8")
 
+        # Step 6.2: Compute final Token & Quota status
+        quota_pkg: dict = {}
+        is_quota_crit = False
+        try:
+            if str(ROOT / "src") not in sys.path:
+                sys.path.insert(0, str(ROOT / "src"))
+            from jhoc.quota.antigravity_quota import evaluate_quota_alert, format_quota_markdown, get_antigravity_quota_live
+            sid = None
+            brain = Path.home() / ".gemini" / "antigravity-ide" / "brain"
+            if brain.is_dir():
+                cand = sorted(brain.glob("*/.system_generated/logs/transcript.jsonl"), key=lambda f: f.stat().st_mtime, reverse=True)
+                if cand:
+                    sid = cand[0].parent.parent.parent.name
+            q_data = get_antigravity_quota_live(session_id=sid)
+            q_alert = evaluate_quota_alert(q_data, threshold_pct=8.0)
+            is_quota_crit = q_alert.is_critical
+            quota_pkg = {
+                "quota_data": q_data,
+                "is_critical": is_quota_crit,
+                "alert_level": q_alert.alert_level,
+                "critical_buckets": list(q_alert.critical_buckets),
+                "account_email": q_alert.account_email,
+            }
+            print(f"[INFO] Closure Quota: {format_quota_markdown(q_data, q_alert)}")
+        except Exception:
+            pass
+
         handoff_pkg = {
             "task_id": task_id,
             "title": state.get("title", ""),
@@ -155,6 +182,9 @@ def run_shougong(archive: bool = True, force: bool = False) -> int:
             "workspace": str(ROOT),
             "git_baseline_sha": state.get("git_baseline_sha", ""),
             "pending_actions": state.get("pending_actions", []),
+            "quota_status": quota_pkg,
+            "quota_critical": is_quota_crit,
+            "switch_account_recommended": is_quota_crit,
             "summary": f"Task '{state.get('title', '')}' closed successfully with all tests passing.",
         }
         handoff_file = ROOT / "memory" / "handoff-latest.json"

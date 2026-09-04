@@ -27,6 +27,7 @@ class IntentClassifier:
         (re.compile(r"(\$kaigong|/kaigong|^kaigong$|^/开工$|^开工$|开工门禁|启动任务)", re.IGNORECASE), IntentType.KAIGONG, 1.0),
         (re.compile(r"(\$shougong|/shougong|^shougong$|^/收工$|^收工$|收工清理|收工闭环)", re.IGNORECASE), IntentType.SHOUGONG, 1.0),
         (re.compile(r"(post-task-shared-memory|共享记忆归档|任务收尾归档|post task archive|落盘记忆)", re.IGNORECASE), IntentType.POST_TASK_MEMORY, 1.0),
+        (re.compile(r"(token-stats|/token_stats|token_stats|额度查询|账户额度|账户配额|配额检测|token统计|配额统计)", re.IGNORECASE), IntentType.TOKEN_STATS, 1.0),
         (re.compile(r"(安全审计|提权|注入攻击|漏洞|CVE|bypass|token_guard|path_guard)", re.IGNORECASE), IntentType.SECURITY_AUDIT, 1.0),
         (re.compile(r"(排查|修复|报错|traceback|oom|crash|死锁排查|故障诊断|单测失败|test_.*fail)", re.IGNORECASE), IntentType.DETERMINISTIC_ENGINEERING, 0.95),
     )
@@ -54,6 +55,9 @@ class IntentClassifier:
         IntentType.POST_TASK_MEMORY: (
             "记忆", "归档", "落盘", "持久化", "session"
         ),
+        IntentType.TOKEN_STATS: (
+            "额度", "配额", "token", "5h", "weekly", "剩余", "阈值", "告警", "重置"
+        ),
         IntentType.DETERMINISTIC_ENGINEERING: (
             "代码", "修复", "重构", "接口", "契约", "schema", "sqlite", "wal", "测试", "断言", "函数", "模块", "配置", "规约"
         ),
@@ -70,6 +74,7 @@ class IntentClassifier:
         IntentType.KAIGONG: ".agents/skills/kaigong/SKILL.md",
         IntentType.SHOUGONG: ".agents/skills/shougong/SKILL.md",
         IntentType.POST_TASK_MEMORY: ".agents/skills/post-task-shared-memory/SKILL.md",
+        IntentType.TOKEN_STATS: ".agents/skills/token-stats/SKILL.md",
     }
 
     def __init__(self, local_llm_url: str = "http://127.0.0.1:8768/v1/chat/completions") -> None:

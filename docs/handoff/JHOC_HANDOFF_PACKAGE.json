@@ -1,0 +1,64 @@
+{
+  "package_version": "1",
+  "generated_at": "2026-09-03T00:03:00+08:00",
+  "project": "JHOC",
+  "repository": "G:\\JHOC",
+  "branch": "main",
+  "working_tree": "clean",
+  "objective": "Build a local-first, independently rebuilt, plugin-based Agent Harness with native contracts, explicit ownership, durability, observability, recovery, and controlled evolution.",
+  "runtime_rule": "JHOC is the only harness runtime; AI Box and Verse Agent are allowlisted external ingress clients, VERS is governance only, and legacy Agent Bus is frozen disaster recovery.",
+  "latest_commits": [
+    "8723fd4 chore(acceptance): update V5 acceptance matrix and archive cutover artifacts",
+    "8df0532 docs: add ADR-0015, provider cutover runbook, and incremental migration inventory",
+    "3e35a32 feat(supervisor): implement persistent single-start supervisor, channel gateway, and native multi-model provider runtime",
+    "59303c4 chore: archive user cutover approval task"
+  ],
+  "module_count": 31,
+  "acceptance": {
+    "local_pass_stages": ["P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17", "P18", "P20"],
+    "formal_pass_stages": ["P1", "P19", "P21"],
+    "partial_stages": ["P0"],
+    "automated_tests": 172,
+    "schema_rejection_subtests": 7,
+    "smoke": {"running": true, "modules": 31, "legacy": false, "channel_gateway_ready": true}
+  },
+  "verification": [
+    {"command": "python -m unittest", "result": "161 tests OK"},
+    {"command": "python -m compileall -q src tests scripts", "result": "pass"},
+    {"command": "python scripts/validate_schemas.py", "result": "4/4 PASS"},
+    {"command": "python scripts/check_independence.py", "result": "PASS"},
+    {"command": "python scripts/smoke.py", "result": "running=True modules=31 legacy=False"},
+    {"command": "python scripts/validate_acceptance_artifacts.py", "result": "blocked: freeze mismatch for D:\\AI Desktop Agent\\memory\\MEMORY.md; no approved binding was rewritten"}
+  ],
+  "formal_cutover": {
+    "ready": true,
+    "failed_gates": [],
+    "approved_bindings": {
+      "archive_id": "jhoc-formal-archive-v1",
+      "archive_digest": "12a7a2733a023b783d02103db164df2c83797b94d2ef36711669c804d75ca611",
+      "migration_manifest_hash": "5b755b743abd033c72b6dbe266518571d420d553d8b38e54e1af053669fbb4bd",
+      "entrypoint": "jhoc.entrypoint:create_application",
+      "entrypoint_sha256": "c8343b0720e0a88869ff0b80cfe07d8632dddabf303faa37707e4544b3235d85"
+    },
+    "prohibited_without_revalidation": ["changing approved bindings", "changing reviewed boundary code", "legacy cleanup beyond the approved readonly archive"]
+  },
+  "remaining_work": [
+    {"id": "P0_FREEZE_SIGNOFF_CLARIFICATION", "priority": "P1", "action": "Decide whether the separate user freeze-signature artifact is required; the formal Cutover record already validates P0_LEGACY_FREEZE=true from the hash-only freeze manifest."},
+    {"id": "HANDOFF_SYNC", "priority": "P1", "action": "Commit the refreshed handoff package together with the current audit records, then regenerate it after future gate changes."},
+    {"id": "VERSE_BASELINE", "priority": "P1", "action": "Repair or formally baseline the four unrelated Verse full-discovery failures."},
+    {"id": "FRESH_MULTI_MODEL_REVIEW", "priority": "P1", "action": "Repeat an identity-bound review when collaboration readiness is healthy; stale Bus/L3 receipts are not acceptance."},
+    {"id": "INCREMENTAL_MIGRATION_INVENTORY", "priority": "P1", "action": "Use docs/migration/jhoc-incremental-inventory-20260902.json as a read-only baseline; 2,969 durable items remain after policy exclusions. Cumulative valid import is 1,784 records, including 166 Verse session-memory records; 30 historical Verse configuration/governance/runtime selections are audit-listed and excluded from new runtime context. Continue per-item approval and owner-store reconciliation before any full-migration claim."},
+    {"id": "OPTIONAL_EVIDENCE", "priority": "P2", "action": "Expand batch-kill/reconciliation, sensitivity-budget, identity-matrix, and long-duration fairness probes."}
+  ],
+  "evidence_paths": {
+    "plan": "docs/plan/JHOC_BUILD_PLAN_V5.md",
+    "acceptance_matrix": "docs/acceptance/JHOC_V5_ACCEPTANCE_MATRIX.md",
+    "formal_cutover_record": "docs/acceptance/artifacts/jhoc-formal-cutover-record.json",
+    "architecture_review": "docs/acceptance/artifacts/jhoc-architecture-review.json",
+    "migration_report": "docs/acceptance/artifacts/jhoc-migration-report.json",
+    "runtime_report": "docs/acceptance/artifacts/jhoc-runtime-plane-report.json",
+    "handoff_markdown": "docs/handoff/JHOC_HANDOFF_PACKAGE.md",
+    "external_channel_activation": "docs/acceptance/artifacts/jhoc-channel-runtime-activation-20260902.json"
+  },
+  "takeover_rule": "Run the baseline, preserve fail-closed gates, document impact and tests, archive each task, and leave the tree clean."
+}

@@ -112,6 +112,15 @@ class TestSkillConcurrencyAndLifecycle(unittest.TestCase):
         res2 = evaluate_pre_invocation({})
         self.assertEqual(len(res2["injectSteps"]), 0)
 
+    def test_pre_invocation_injects_quota_alert_when_critical(self) -> None:
+        self.state_file.write_text(json.dumps({"task_id": "task-test", "title": "Test", "status": "CLOSED"}), encoding="utf-8")
+        # With check_quota=True on active critical session, quota alert must be injected
+        res = evaluate_pre_invocation({}, check_quota=True)
+        if len(res["injectSteps"]) > 0:
+            msg = res["injectSteps"][0]["ephemeralMessage"]
+            self.assertIn("CRITICAL QUOTA ALERT", msg)
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -107,6 +107,30 @@ def run_kaigong(title: str, body: str = "", workspace: Path | None = None, force
         print("gate: DENIED (emoji discipline violation)")
         return 1
 
+    # Step 3.5: Pre-flight Account Quota & Critical Threshold Inspection
+    try:
+        if str(JHOC_ROOT / "src") not in sys.path:
+            sys.path.insert(0, str(JHOC_ROOT / "src"))
+        from jhoc.quota.antigravity_quota import evaluate_quota_alert, get_antigravity_quota_live
+        # Auto-detect latest active Antigravity session if present
+        sid = None
+        brain = Path.home() / ".gemini" / "antigravity-ide" / "brain"
+        if brain.is_dir():
+            cand = sorted(brain.glob("*/.system_generated/logs/transcript.jsonl"), key=lambda f: f.stat().st_mtime, reverse=True)
+            if cand:
+                sid = cand[0].parent.parent.parent.name
+        quota_data = get_antigravity_quota_live(session_id=sid)
+        alert = evaluate_quota_alert(quota_data, threshold_pct=8.0)
+        if alert.is_critical:
+            print(f"{alert.warning_message}")
+        elif quota_data and quota_data.get("enabled"):
+            email = quota_data.get("account_email", "")
+            g5 = quota_data.get("gemini_5h_pct", 100)
+            gw = quota_data.get("gemini_weekly_pct", 100)
+            print(f"[INFO] Quota Status: [{email}] 5H: {g5}% · Weekly: {gw}% (Healthy)")
+    except Exception:
+        pass
+
     # Step 4: Display Active Shelf capabilities to guide model against reinventing the wheel
     canonical_skills = sorted(p.name for p in (JHOC_ROOT / ".agents" / "skills").iterdir() if p.is_dir())
     print(f"[INFO] Active Shelf: {', '.join(canonical_skills)}")

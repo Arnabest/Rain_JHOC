@@ -1,7 +1,7 @@
 # JHOC 技能货架权威总目录 (Skill Shelf Ledger)
 
 > **Authority**: Governed under [`ADR-0009-registry-shelf-quota.md`](file:///g:/JHOC/docs/adr/ADR-0009-registry-shelf-quota.md) 与 [`src/jhoc/shelf/`](file:///g:/JHOC/src/jhoc/shelf/)
-> **准入技能总数**: 7 项 | **状态**: 全部 VERIFIED & SHELF_ELIGIBLE
+> **准入技能总数**: 8 项 | **状态**: 全部 VERIFIED & SHELF_ELIGIBLE
 
 ---
 
@@ -14,6 +14,7 @@
 | `paper-to-knowledge-distiller` | `1.1.0` | `methodology` | `paper-to-knowledge-distiller`, `paper-distiller`, `论文研读` | `VERIFIED` | [paper-to-knowledge-distiller](.agents/skills/paper-to-knowledge-distiller/SKILL.md) |
 | `post-task-shared-memory` | `2.1.0` | `memory` | `post-task-shared-memory`, `共享记忆归档`, `任务收尾归档` | `VERIFIED` | [post-task-shared-memory](.agents/skills/post-task-shared-memory/SKILL.md) |
 | `shougong` | `2.1.0` | `workflow` | `/收工`, `收工`, `shougong` | `VERIFIED` | [shougong](.agents/skills/shougong/SKILL.md) |
+| `token-stats` | `2.1.0` | `governance` | `token-stats`, `token_stats`, `额度查询` | `VERIFIED` | [token-stats](.agents/skills/token-stats/SKILL.md) |
 
 ---
 
@@ -31,11 +32,11 @@
 ```text
 [阶段 1: INCEPTION 需求澄清期]
   - 核心技能: counter-questioning-probe, paper-to-knowledge-distiller
-  - 约束: 仅分析需求与前置反问，严禁写代码，严禁开工。
+  - 约束: 仅分析需求与前置反问，审定生成式规范边界，严禁写代码，严禁开工。
 
 [阶段 2: ELABORATION 方案冻结期]
   - 核心技能: codex-plan-review
-  - 约束: 执行 DOWN/UP/FORK 影响分析，产出 implementation plan，等待审批。
+  - 约束: 执行 DOWN/UP/FORK 影响分析与 Plan Checkpoint 方案门禁，产出 implementation plan，等待审批。
 
 [阶段 3: ARM 开工锁定期]
   - 核心技能: kaigong
@@ -52,7 +53,7 @@
           执行全量单测、契约验证与零 Emoji 审查；测试期间阻断一切写入工具。
 
 [阶段 6: CLOSURE 收尾归档期]
-  - 核心技能: post-task-shared-memory, shougong (步骤 6)
+  - 核心技能: post-task-shared-memory, shougong (步骤 6), token-stats
   - 约束: 仅在单测 100% 满绿后触发；生成 handoff-latest.json，沉淀 session.md，
-          状态跃迁至 CLOSED 并解除写冻结，输出归档证据与 Token 统计。
+          状态跃迁至 CLOSED 并解除写冻结，输出归档证据与 Token 统计，并在配额 <= 8% 时输出熔断告警。
 ```
