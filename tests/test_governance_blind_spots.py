@@ -35,6 +35,14 @@ class TestGovernanceBlindSpots(unittest.TestCase):
         else:
             os.environ.pop("JHOC_OPERATOR_TOKEN", None)
 
+        hub_db = ROOT / "logs" / "p19-hub.sqlite"
+        if hub_db.is_file():
+            try:
+                hub = JHOCMultiModelHub(hub_db)
+                hub.register_presence("antigravity-ide", ModelPresenceState.IDLE)
+            except Exception:
+                pass
+
     def test_blind_01_approval_ticket_consumed_after_use(self) -> None:
         # Create and approve a ticket
         cmd = "git reset --hard HEAD~1"

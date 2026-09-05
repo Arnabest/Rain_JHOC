@@ -81,7 +81,14 @@ def check_zero_emoji_discipline(target_root: Path) -> tuple[bool, str]:
     return True, "Zero-Emoji Discipline verified across active governance files"
 
 
-def run_kaigong(title: str, body: str = "", workspace: Path | None = None, force: bool = False) -> int:
+def run_kaigong(
+    title: str,
+    body: str = "",
+    workspace: Path | None = None,
+    force: bool = False,
+    inquiry: bool = False,
+    inquiry_confirmed: bool = False,
+) -> int:
     print("=== [JHOC KAIGONG PRE-FLIGHT GATE] ===")
     target_root = (workspace or Path.cwd()).resolve()
     now_utc = datetime.now(timezone.utc)
@@ -123,6 +130,9 @@ def run_kaigong(title: str, body: str = "", workspace: Path | None = None, force
         alert = evaluate_quota_alert(quota_data, threshold_pct=8.0)
         if alert.is_critical:
             print(f"{alert.warning_message}")
+            if not force:
+                print("gate: DENIED (quota critical <= 8.0%. Use --force to override)")
+                return 1
         elif quota_data and quota_data.get("enabled"):
             email = quota_data.get("account_email", "")
             g5 = quota_data.get("gemini_5h_pct", 100)
@@ -136,7 +146,7 @@ def run_kaigong(title: str, body: str = "", workspace: Path | None = None, force
     print(f"[INFO] Active Shelf: {', '.join(canonical_skills)}")
 
     # Step 5: Capture Git Baseline Commit SHA (with Re-entrance Protection)
-    mem_dir = target_root / "memory" if (target_root / "memory").is_dir() else JHOC_ROOT / "memory"
+    mem_dir = target_root / "memory"
     mem_dir.mkdir(parents=True, exist_ok=True)
     state_file = mem_dir / "v3_task_state.json"
 
@@ -157,6 +167,23 @@ def run_kaigong(title: str, body: str = "", workspace: Path | None = None, force
     sha_short = commit_sha[:10] if len(commit_sha) >= 10 else commit_sha
     print(f"[INFO] Git Baseline Commit: {sha_short}")
 
+    # Step 5.8: Four Orthogonal Dimensions Inquiry Gate (Probe & Confirmation)
+    inquiry_status = "CONFIRMED"
+    if inquiry or any(k in title.lower() for k in ("重构", "refactor", "新功能", "架构", "design", "co-review", "governance")):
+        if not inquiry_confirmed and not force:
+            inquiry_status = "PENDING"
+            print("\n" + "=" * 65)
+            print("=== [JHOC INQUIRY GATE: FOUR ORTHOGONAL DIMENSIONS PROBE] ===")
+            print("1. Scope & MVP: What is the hard boundary and minimal acceptable deliverable?")
+            print("2. Architectural Trade-offs: Local determinism vs modular flexibility?")
+            print("3. Fault Tolerance & Fallback: Fail-Closed circuit break vs default safe policy?")
+            print("4. Impact & Long-term Governance: DOWN/UP/FORK invariants & test verification?")
+            print("[MANDATORY ALIGNMENT] Pre-flight counter-questioning probe is PENDING.")
+            print("Model MUST present questions to user and confirm baseline before writing business code.")
+            print("=" * 65 + "\n")
+        else:
+            print("[PASS] Pre-flight inquiry confirmed by user.")
+
     # Step 6: Record task state
     task_state = {
         "task_id": task_id,
@@ -168,6 +195,7 @@ def run_kaigong(title: str, body: str = "", workspace: Path | None = None, force
         "gate": "ALLOW",
         "git_baseline_sha": commit_sha,
         "active_shelf_skills": canonical_skills,
+        "inquiry_status": inquiry_status,
     }
     state_file.write_text(json.dumps(task_state, indent=2, ensure_ascii=True), encoding="utf-8")
 
@@ -220,10 +248,21 @@ def main() -> None:
     parser.add_argument("--body", default="", help="Optional task details")
     parser.add_argument("--workspace", default=None, help="Target workspace root path (default: current working dir)")
     parser.add_argument("--force", action="store_true", help="Force overwrite Git baseline SHA if task is already ARMED")
+    parser.add_argument("--inquiry", action="store_true", help="Trigger pre-flight 4-dimension counter-questioning probe")
+    parser.add_argument("--inquiry-confirmed", action="store_true", help="Mark pre-flight counter-questioning probe as confirmed by user")
     args = parser.parse_args()
 
     ws_path = Path(args.workspace) if args.workspace else None
-    sys.exit(run_kaigong(args.title, args.body, ws_path, force=args.force))
+    sys.exit(
+        run_kaigong(
+            args.title,
+            args.body,
+            ws_path,
+            force=args.force,
+            inquiry=args.inquiry,
+            inquiry_confirmed=args.inquiry_confirmed,
+        )
+    )
 
 
 if __name__ == "__main__":

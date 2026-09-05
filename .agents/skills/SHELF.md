@@ -1,7 +1,7 @@
 # JHOC 技能货架权威总目录 (Skill Shelf Ledger)
 
 > **Authority**: Governed under [`ADR-0009-registry-shelf-quota.md`](file:///g:/JHOC/docs/adr/ADR-0009-registry-shelf-quota.md) 与 [`src/jhoc/shelf/`](file:///g:/JHOC/src/jhoc/shelf/)
-> **技能总数**: 8 项 (核心工程治理: 8 项 | 领域业务扩展: 0 项) | **状态**: 全部 VERIFIED & SHELF_ELIGIBLE
+> **技能总数**: 12 项 (核心工程治理: 8 项 | 领域业务扩展: 4 项) | **状态**: 全部 VERIFIED & SHELF_ELIGIBLE
 
 ---
 
@@ -18,6 +18,18 @@
 | `post-task-shared-memory` | `core` | `2.1.0` | `memory` | `post-task-shared-memory`, `共享记忆归档`, `任务收尾归档` | `VERIFIED` | [post-task-shared-memory](post-task-shared-memory/SKILL.md) |
 | `shougong` | `core` | `2.1.0` | `workflow` | `/收工`, `收工`, `shougong` | `VERIFIED` | [shougong](shougong/SKILL.md) |
 | `token-stats` | `core` | `2.1.0` | `governance` | `token-stats`, `token_stats`, `/token_stats` | `VERIFIED` | [token-stats](token-stats/SKILL.md) |
+
+---
+
+## 二、 领域与业务扩展插件货架 (Domain & Business Plugin Shelf)
+> **物理空间**: `.agents/plugins/domain-content/skills/` | **定位**: 业务领域专用扩展包，按需热插拔，不随微内核发行。
+
+| 技能 Canonical ID | 层级 | 版本 | 分类 | 触发特征 / Aliases | 准入状态 | 对应文件 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `beautiful-article` | `domain` | `1.0.0` | `presentation` | `beautiful-article`, `网页长文`, `生成文章` | `VERIFIED` | [beautiful-article](../plugins/domain-content/skills/beautiful-article/SKILL.md) |
+| `content-generative-harness` | `domain` | `1.0.0` | `methodology` | `content-generative-harness`, `内容生成式规范`, `生成式Harness` | `VERIFIED` | [content-generative-harness](../plugins/domain-content/skills/content-generative-harness/SKILL.md) |
+| `web-video-presentation` | `domain` | `1.1.0` | `multimodal` | `web-video-presentation`, `web-video`, `制作视频` | `VERIFIED` | [web-video-presentation](../plugins/domain-content/skills/web-video-presentation/SKILL.md) |
+| `worklog-distiller` | `domain` | `1.0.0` | `presentation` | `worklog-distiller`, `工作日志`, `日志总结` | `VERIFIED` | [worklog-distiller](../plugins/domain-content/skills/worklog-distiller/SKILL.md) |
 
 ---
 

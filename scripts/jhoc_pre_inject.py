@@ -35,7 +35,7 @@ def evaluate_pre_invocation(payload: dict, check_quota: bool = False) -> dict:
                 sys.path.insert(0, str(ROOT / "src"))
             from jhoc.quota.antigravity_quota import evaluate_quota_alert, get_antigravity_quota_live
 
-            sid = payload.get("session_id")
+            sid = payload.get("conversationId") or payload.get("session_id")
             if not sid:
                 brain = Path.home() / ".gemini" / "antigravity-ide" / "brain"
                 if brain.is_dir():
@@ -53,6 +53,22 @@ def evaluate_pre_invocation(payload: dict, check_quota: bool = False) -> dict:
                 steps.append({"ephemeralMessage": quota_msg})
         except Exception:
             pass
+
+    # 3. Governance Engine JIT Intent & Lesson Injection
+    try:
+        driver_path = ROOT / ".agents" / "plugins" / "governance-engine" / "adapters"
+        if str(driver_path) not in sys.path:
+            sys.path.insert(0, str(driver_path))
+        from ide_hook_driver import IDEHookDriver
+        driver = IDEHookDriver(ROOT)
+        gov_res = driver.evaluate_pre_invocation(payload, timeout_ms=20.0)
+        for s in gov_res.get("injectSteps", []):
+            msg = s.get("ephemeralMessage", "")
+            if "[JHOC LIFECYCLE GUARD]" in msg:
+                continue
+            steps.append(s)
+    except Exception:
+        pass
 
     return {"injectSteps": steps}
 

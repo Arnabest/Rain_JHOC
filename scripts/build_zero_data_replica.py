@@ -33,12 +33,8 @@ EXCLUDE_DIRS = {
     "migration",
     "session",
     "acceptance",
-    # Task-generated research materials and content-generation skills
+    # Task-generated research materials
     "research",
-    "domain-content",
-    "beautiful-article",
-    "web-video-presentation",
-    "content-generative-harness",
 }
 
 EXCLUDE_EXTENSIONS = {
@@ -267,21 +263,21 @@ def build_replica(commit_msg: str | None = None, push: bool = False) -> int:
     py_bin = sys.executable
 
     print("[CHECK] Running Schema Validation in clean replica...")
-    r1 = subprocess.run([py_bin, "scripts/validate_schemas.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+    r1 = subprocess.run([py_bin, "scripts/validate_schemas.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace")
     if r1.returncode != 0:
         print(f"[FAIL] Schema validation failed in replica:\n{r1.stderr or r1.stdout}")
         return 1
     print("[PASS] Schema validation passed.")
 
-    print("[CHECK] Running 353 Unit Tests in clean replica...")
-    r2 = subprocess.run([py_bin, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+    print("[CHECK] Running Unit Tests in clean replica...")
+    r2 = subprocess.run([py_bin, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace")
     if r2.returncode != 0:
         print(f"[FAIL] Unit tests failed in replica:\n{r2.stderr or r2.stdout}")
         return 1
     print("[PASS] All unit tests passed in zero-data replica.")
 
     print("[CHECK] Running Acceptance Probes in clean replica...")
-    r3 = subprocess.run([py_bin, "scripts/validate_acceptance_artifacts.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+    r3 = subprocess.run([py_bin, "scripts/validate_acceptance_artifacts.py"], cwd=str(TARGET_ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace")
     if r3.returncode != 0:
         print(f"[FAIL] Acceptance probes failed in replica:\n{r3.stderr or r3.stdout}")
         return 1
@@ -309,7 +305,7 @@ def build_replica(commit_msg: str | None = None, push: bool = False) -> int:
         subprocess.run(["git", "config", "user.name", "JHOC Contributor"], cwd=str(TARGET_ROOT), check=True)
         subprocess.run(["git", "config", "user.email", "jhoc@localhost"], cwd=str(TARGET_ROOT), check=True)
     subprocess.run(["git", "add", "."], cwd=str(TARGET_ROOT), check=True)
-    diff_check = subprocess.run(["git", "diff", "--cached", "--name-only"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+    diff_check = subprocess.run(["git", "diff", "--cached", "--name-only"], cwd=str(TARGET_ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace")
     if diff_check.stdout.strip():
         final_msg = commit_msg or "feat: synchronize clean replica with updated research knowledgebase and skills"
         subprocess.run(["git", "commit", "-m", final_msg], cwd=str(TARGET_ROOT), check=True)
@@ -319,7 +315,7 @@ def build_replica(commit_msg: str | None = None, push: bool = False) -> int:
 
     if push:
         print("\n=== [PUSHING TO GITHUB] ===")
-        push_res = subprocess.run(["git", "push", "origin", "main"], cwd=str(TARGET_ROOT), capture_output=True, text=True)
+        push_res = subprocess.run(["git", "push", "origin", "main"], cwd=str(TARGET_ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace")
         if push_res.returncode != 0:
             print(f"[FAIL] Git push failed:\n{push_res.stderr or push_res.stdout}")
             return 1

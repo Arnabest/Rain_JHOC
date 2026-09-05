@@ -1,0 +1,599 @@
+{
+  "generated_at": "2026-09-05T00:43:32.894956+00:00",
+  "total_nodes": 46,
+  "total_relations": 45,
+  "nodes": [
+    {
+      "node_id": "worklog:latex-tts-scramble-and-aec-echo",
+      "node_type": "ProblemLog",
+      "label": "语音合成与识别双向流水线：攻克 LaTeX 乱码发音与麦克风自发声死循环"
+    },
+    {
+      "node_id": "task:session-20260905-audio-voice-infra-consolidation",
+      "node_type": "Task",
+      "label": "memory/session-20260905-audio-voice-infra-consolidation.md"
+    },
+    {
+      "node_id": "commit:225d3f7",
+      "node_type": "GitCommit",
+      "label": "Commit 225d3f7"
+    },
+    {
+      "node_id": "code:desktop_client/src/services/voiceCleanPipeline.ts",
+      "node_type": "CodeEntity",
+      "label": "desktop_client/src/services/voiceCleanPipeline.ts"
+    },
+    {
+      "node_id": "code:desktop_client/src/services/audioVoiceInfraService.ts",
+      "node_type": "CodeEntity",
+      "label": "desktop_client/src/services/audioVoiceInfraService.ts"
+    },
+    {
+      "node_id": "code:desktop_client/src/types/voiceInfra.ts",
+      "node_type": "CodeEntity",
+      "label": "desktop_client/src/types/voiceInfra.ts"
+    },
+    {
+      "node_id": "evidence:scratch/test_voice_infra_suite.ts",
+      "node_type": "Evidence",
+      "label": "scratch/test_voice_infra_suite.ts"
+    },
+    {
+      "node_id": "lesson:LESSON-audio-voice-infra-consolidation",
+      "node_type": "Lesson",
+      "label": "docs/lessons/LESSON-audio-voice-infra-consolidation.md"
+    },
+    {
+      "node_id": "env:latex-tts-scramble-and-aec-echo:reproduced_1",
+      "node_type": "EnvironmentCondition",
+      "label": "用户佩戴长延时蓝牙外设（音频往返传输 RTT > 400ms）在多人嘈杂会议室进行快速插话打断测试"
+    },
+    {
+      "node_id": "worklog:latex-tts-scramble-and-aec-echo:v2",
+      "node_type": "ProblemLog",
+      "label": "语音合成与识别双向流水线：攻克 LaTeX 乱码发音与麦克风自发声死循环 (更优解 v2)"
+    },
+    {
+      "node_id": "worklog:windows-app-alias-python-conflict",
+      "node_type": "ProblemLog",
+      "label": "Windows 命令行应用别名陷阱：排查 Python 进程静默退出与自动化门禁假死"
+    },
+    {
+      "node_id": "task:session-20260903-jhoc-governance-closure",
+      "node_type": "Task",
+      "label": "memory/session-20260903-jhoc-governance-closure.md"
+    },
+    {
+      "node_id": "commit:73944da",
+      "node_type": "GitCommit",
+      "label": "Commit 73944da"
+    },
+    {
+      "node_id": "code:scripts/jhoc_kaigong.py",
+      "node_type": "CodeEntity",
+      "label": "scripts/jhoc_kaigong.py"
+    },
+    {
+      "node_id": "code:scripts/jhoc_worklog.py",
+      "node_type": "CodeEntity",
+      "label": "scripts/jhoc_worklog.py"
+    },
+    {
+      "node_id": "code:scripts/jhoc_shougong.py",
+      "node_type": "CodeEntity",
+      "label": "scripts/jhoc_shougong.py"
+    },
+    {
+      "node_id": "evidence:tests/test_skills_shelf_compliance.py",
+      "node_type": "Evidence",
+      "label": "tests/test_skills_shelf_compliance.py"
+    },
+    {
+      "node_id": "evidence:tests/test_zero_emoji_discipline.py",
+      "node_type": "Evidence",
+      "label": "tests/test_zero_emoji_discipline.py"
+    },
+    {
+      "node_id": "lesson:LESSON-windows-app-alias",
+      "node_type": "Lesson",
+      "label": "docs/lessons/LESSON-windows-app-alias.md"
+    },
+    {
+      "node_id": "env:windows-app-alias-python-conflict:reproduced_1",
+      "node_type": "EnvironmentCondition",
+      "label": "在极简无界面的 Windows Server Core / Nano Server Docker 容"
+    },
+    {
+      "node_id": "worklog:windows-app-alias-python-conflict:v2",
+      "node_type": "ProblemLog",
+      "label": "Windows 命令行应用别名陷阱：排查 Python 进程静默退出与自动化门禁假死 (更优解 v2)"
+    },
+    {
+      "node_id": "worklog:session-parser-state-machine-keyword-bleed",
+      "node_type": "ProblemLog",
+      "label": "半结构化 Markdown 状态机解析边界失守排障：防范正文标题关键字模糊穿透"
+    },
+    {
+      "node_id": "task:session-20260905-worklog-distiller-skill",
+      "node_type": "Task",
+      "label": "memory/session-20260905-worklog-distiller-skill.md"
+    },
+    {
+      "node_id": "commit:143f4c9",
+      "node_type": "GitCommit",
+      "label": "Commit 143f4c9"
+    },
+    {
+      "node_id": "evidence:tests/test_worklog_distiller.py",
+      "node_type": "Evidence",
+      "label": "tests/test_worklog_distiller.py"
+    },
+    {
+      "node_id": "lesson:LESSON-state-machine-boundaries",
+      "node_type": "Lesson",
+      "label": "docs/lessons/LESSON-state-machine-boundaries.md"
+    },
+    {
+      "node_id": "env:session-parser-state-machine-keyword-bleed:reproduced_1",
+      "node_type": "EnvironmentCondition",
+      "label": "当会话文档正文的代码块中包含 Markdown 语法示例（即在 ````markdown 围栏内写了"
+    },
+    {
+      "node_id": "worklog:session-parser-state-machine-keyword-bleed:v2",
+      "node_type": "ProblemLog",
+      "label": "半结构化 Markdown 状态机解析边界失守排障：防范正文标题关键字模糊穿透 (更优解 v2)"
+    },
+    {
+      "node_id": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "node_type": "ProblemLog",
+      "label": "桌面客户端搜索框交互错位：排查右键放大镜图标欺诈与全局焦点争抢"
+    },
+    {
+      "node_id": "task:2026-09-05-verse-search-focus",
+      "node_type": "Task",
+      "label": "logs/archive_payloads/2026-09-05-verse-search-focus.json"
+    },
+    {
+      "node_id": "commit:d8c3e1a",
+      "node_type": "GitCommit",
+      "label": "Commit d8c3e1a"
+    },
+    {
+      "node_id": "code:desktop_client/src/components/common/AgentContextMenu.tsx",
+      "node_type": "CodeEntity",
+      "label": "desktop_client/src/components/common/AgentContextMenu.tsx"
+    },
+    {
+      "node_id": "code:desktop_client/src/components/sidebar/Sidebar.tsx",
+      "node_type": "CodeEntity",
+      "label": "desktop_client/src/components/sidebar/Sidebar.tsx"
+    },
+    {
+      "node_id": "code:desktop_client/src/hooks/useKeyboardShortcuts.ts",
+      "node_type": "CodeEntity",
+      "label": "desktop_client/src/hooks/useKeyboardShortcuts.ts"
+    },
+    {
+      "node_id": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "node_type": "ProblemLog",
+      "label": "跨宿主治理插件与反冲动意图管道：攻克模型纯文本角色扮演与多模型协审物理拦截"
+    },
+    {
+      "node_id": "task:session-20260905-governance-engine-plugin-and-intent-asset-pipeline",
+      "node_type": "Task",
+      "label": "memory/session-20260905-governance-engine-plugin-and-intent-asset-pipeline.md"
+    },
+    {
+      "node_id": "code:.agents/plugins/governance-engine/plugin.json",
+      "node_type": "CodeEntity",
+      "label": ".agents/plugins/governance-engine/plugin.json"
+    },
+    {
+      "node_id": "code:.agents/plugins/governance-engine/core/indexer.py",
+      "node_type": "CodeEntity",
+      "label": ".agents/plugins/governance-engine/core/indexer.py"
+    },
+    {
+      "node_id": "code:.agents/plugins/governance-engine/core/tri_tier_classifier.py",
+      "node_type": "CodeEntity",
+      "label": ".agents/plugins/governance-engine/core/tri_tier_classifier.py"
+    },
+    {
+      "node_id": "code:.agents/plugins/governance-engine/core/template_renderer.py",
+      "node_type": "CodeEntity",
+      "label": ".agents/plugins/governance-engine/core/template_renderer.py"
+    },
+    {
+      "node_id": "code:scripts/jhoc_post_verify.py",
+      "node_type": "CodeEntity",
+      "label": "scripts/jhoc_post_verify.py"
+    },
+    {
+      "node_id": "code:scripts/jhoc_trace.py",
+      "node_type": "CodeEntity",
+      "label": "scripts/jhoc_trace.py"
+    },
+    {
+      "node_id": "code:.agents/hooks.json",
+      "node_type": "CodeEntity",
+      "label": ".agents/hooks.json"
+    },
+    {
+      "node_id": "evidence:logs/co-review/20260904T235703Z-intent-and-assets-co-review.json",
+      "node_type": "Evidence",
+      "label": "logs/co-review/20260904T235703Z-intent-and-assets-co-review.json"
+    },
+    {
+      "node_id": "evidence:tests/plugins/test_governance_engine.py",
+      "node_type": "Evidence",
+      "label": "tests/plugins/test_governance_engine.py"
+    },
+    {
+      "node_id": "lesson:147-anti-sycophancy-and-distillation",
+      "node_type": "Lesson",
+      "label": "docs/lessons/147-anti-sycophancy-and-distillation.md"
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->derived_from->task:session-20260905-audio-voice-infra-consolidation",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "task:session-20260905-audio-voice-infra-consolidation",
+      "relation_type": "derived_from",
+      "confidence": 1.0,
+      "source_ref": "memory/session-20260905-audio-voice-infra-consolidation.md"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->observed_in->commit:225d3f7",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "commit:225d3f7",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "git:225d3f7"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->solves->code:desktop_client/src/services/voiceCleanPipeline.ts",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "code:desktop_client/src/services/voiceCleanPipeline.ts",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "desktop_client/src/services/voiceCleanPipeline.ts"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->solves->code:desktop_client/src/services/audioVoiceInfraService.ts",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "code:desktop_client/src/services/audioVoiceInfraService.ts",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "desktop_client/src/services/audioVoiceInfraService.ts"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->solves->code:desktop_client/src/types/voiceInfra.ts",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "code:desktop_client/src/types/voiceInfra.ts",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "desktop_client/src/types/voiceInfra.ts"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->verified_by->evidence:scratch/test_voice_infra_suite.ts",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "evidence:scratch/test_voice_infra_suite.ts",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "scratch/test_voice_infra_suite.ts"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->related_to->lesson:LESSON-audio-voice-infra-consolidation",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "lesson:LESSON-audio-voice-infra-consolidation",
+      "relation_type": "related_to",
+      "confidence": 1.0,
+      "source_ref": "docs/lessons/LESSON-audio-voice-infra-consolidation.md"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo->observed_in->env:latex-tts-scramble-and-aec-echo:reproduced_1",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "target_node": "env:latex-tts-scramble-and-aec-echo:reproduced_1",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "2026-09-05"
+    },
+    {
+      "relation_id": "rel:worklog:latex-tts-scramble-and-aec-echo:v2->supersedes->worklog:latex-tts-scramble-and-aec-echo",
+      "source_node": "worklog:latex-tts-scramble-and-aec-echo:v2",
+      "target_node": "worklog:latex-tts-scramble-and-aec-echo",
+      "relation_type": "supersedes",
+      "confidence": 1.0,
+      "source_ref": "2026-09-05"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->derived_from->task:session-20260903-jhoc-governance-closure",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "task:session-20260903-jhoc-governance-closure",
+      "relation_type": "derived_from",
+      "confidence": 1.0,
+      "source_ref": "memory/session-20260903-jhoc-governance-closure.md"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->observed_in->commit:73944da",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "commit:73944da",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "git:73944da"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->solves->code:scripts/jhoc_kaigong.py",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "code:scripts/jhoc_kaigong.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "scripts/jhoc_kaigong.py"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->solves->code:scripts/jhoc_worklog.py",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "code:scripts/jhoc_worklog.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "scripts/jhoc_worklog.py"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->solves->code:scripts/jhoc_shougong.py",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "code:scripts/jhoc_shougong.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "scripts/jhoc_shougong.py"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->verified_by->evidence:tests/test_skills_shelf_compliance.py",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "evidence:tests/test_skills_shelf_compliance.py",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "tests/test_skills_shelf_compliance.py"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->verified_by->evidence:tests/test_zero_emoji_discipline.py",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "evidence:tests/test_zero_emoji_discipline.py",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "tests/test_zero_emoji_discipline.py"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->related_to->lesson:LESSON-windows-app-alias",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "lesson:LESSON-windows-app-alias",
+      "relation_type": "related_to",
+      "confidence": 1.0,
+      "source_ref": "docs/lessons/LESSON-windows-app-alias.md"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict->observed_in->env:windows-app-alias-python-conflict:reproduced_1",
+      "source_node": "worklog:windows-app-alias-python-conflict",
+      "target_node": "env:windows-app-alias-python-conflict:reproduced_1",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "2026-09-05"
+    },
+    {
+      "relation_id": "rel:worklog:windows-app-alias-python-conflict:v2->supersedes->worklog:windows-app-alias-python-conflict",
+      "source_node": "worklog:windows-app-alias-python-conflict:v2",
+      "target_node": "worklog:windows-app-alias-python-conflict",
+      "relation_type": "supersedes",
+      "confidence": 1.0,
+      "source_ref": "2026-09-05"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed->derived_from->task:session-20260905-worklog-distiller-skill",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "target_node": "task:session-20260905-worklog-distiller-skill",
+      "relation_type": "derived_from",
+      "confidence": 1.0,
+      "source_ref": "memory/session-20260905-worklog-distiller-skill.md"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed->observed_in->commit:143f4c9",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "target_node": "commit:143f4c9",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "git:143f4c9"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed->solves->code:scripts/jhoc_worklog.py",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "target_node": "code:scripts/jhoc_worklog.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "scripts/jhoc_worklog.py"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed->verified_by->evidence:tests/test_worklog_distiller.py",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "target_node": "evidence:tests/test_worklog_distiller.py",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "tests/test_worklog_distiller.py"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed->related_to->lesson:LESSON-state-machine-boundaries",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "target_node": "lesson:LESSON-state-machine-boundaries",
+      "relation_type": "related_to",
+      "confidence": 1.0,
+      "source_ref": "docs/lessons/LESSON-state-machine-boundaries.md"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed->observed_in->env:session-parser-state-machine-keyword-bleed:reproduced_1",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "target_node": "env:session-parser-state-machine-keyword-bleed:reproduced_1",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "2026-09-05"
+    },
+    {
+      "relation_id": "rel:worklog:session-parser-state-machine-keyword-bleed:v2->supersedes->worklog:session-parser-state-machine-keyword-bleed",
+      "source_node": "worklog:session-parser-state-machine-keyword-bleed:v2",
+      "target_node": "worklog:session-parser-state-machine-keyword-bleed",
+      "relation_type": "supersedes",
+      "confidence": 1.0,
+      "source_ref": "2026-09-05"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->derived_from->task:2026-09-05-verse-search-focus",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "task:2026-09-05-verse-search-focus",
+      "relation_type": "derived_from",
+      "confidence": 1.0,
+      "source_ref": "logs/archive_payloads/2026-09-05-verse-search-focus.json"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->observed_in->commit:d8c3e1a",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "commit:d8c3e1a",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "git:d8c3e1a"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->solves->code:desktop_client/src/components/common/AgentContextMenu.tsx",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "code:desktop_client/src/components/common/AgentContextMenu.tsx",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "desktop_client/src/components/common/AgentContextMenu.tsx"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->solves->code:desktop_client/src/components/sidebar/Sidebar.tsx",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "code:desktop_client/src/components/sidebar/Sidebar.tsx",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "desktop_client/src/components/sidebar/Sidebar.tsx"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->solves->code:desktop_client/src/hooks/useKeyboardShortcuts.ts",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "code:desktop_client/src/hooks/useKeyboardShortcuts.ts",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "desktop_client/src/hooks/useKeyboardShortcuts.ts"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->verified_by->evidence:tests/test_worklog_distiller.py",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "evidence:tests/test_worklog_distiller.py",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "tests/test_worklog_distiller.py"
+    },
+    {
+      "relation_id": "rel:worklog:verse-search-box-focus-and-magnifier-misalignment->related_to->lesson:LESSON-state-machine-boundaries",
+      "source_node": "worklog:verse-search-box-focus-and-magnifier-misalignment",
+      "target_node": "lesson:LESSON-state-machine-boundaries",
+      "relation_type": "related_to",
+      "confidence": 1.0,
+      "source_ref": "docs/lessons/LESSON-state-machine-boundaries.md"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->derived_from->task:session-20260905-governance-engine-plugin-and-intent-asset-pipeline",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "task:session-20260905-governance-engine-plugin-and-intent-asset-pipeline",
+      "relation_type": "derived_from",
+      "confidence": 1.0,
+      "source_ref": "memory/session-20260905-governance-engine-plugin-and-intent-asset-pipeline.md"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->observed_in->commit:225d3f7",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "commit:225d3f7",
+      "relation_type": "observed_in",
+      "confidence": 1.0,
+      "source_ref": "git:225d3f7"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:.agents/plugins/governance-engine/plugin.json",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:.agents/plugins/governance-engine/plugin.json",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": ".agents/plugins/governance-engine/plugin.json"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:.agents/plugins/governance-engine/core/indexer.py",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:.agents/plugins/governance-engine/core/indexer.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": ".agents/plugins/governance-engine/core/indexer.py"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:.agents/plugins/governance-engine/core/tri_tier_classifier.py",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:.agents/plugins/governance-engine/core/tri_tier_classifier.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": ".agents/plugins/governance-engine/core/tri_tier_classifier.py"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:.agents/plugins/governance-engine/core/template_renderer.py",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:.agents/plugins/governance-engine/core/template_renderer.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": ".agents/plugins/governance-engine/core/template_renderer.py"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:scripts/jhoc_post_verify.py",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:scripts/jhoc_post_verify.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "scripts/jhoc_post_verify.py"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:scripts/jhoc_trace.py",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:scripts/jhoc_trace.py",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": "scripts/jhoc_trace.py"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->solves->code:.agents/hooks.json",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "code:.agents/hooks.json",
+      "relation_type": "solves",
+      "confidence": 1.0,
+      "source_ref": ".agents/hooks.json"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->verified_by->evidence:logs/co-review/20260904T235703Z-intent-and-assets-co-review.json",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "evidence:logs/co-review/20260904T235703Z-intent-and-assets-co-review.json",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "logs/co-review/20260904T235703Z-intent-and-assets-co-review.json"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->verified_by->evidence:tests/plugins/test_governance_engine.py",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "evidence:tests/plugins/test_governance_engine.py",
+      "relation_type": "verified_by",
+      "confidence": 1.0,
+      "source_ref": "tests/plugins/test_governance_engine.py"
+    },
+    {
+      "relation_id": "rel:worklog:governance-engine-intent-and-anti-impulse-gate->related_to->lesson:147-anti-sycophancy-and-distillation",
+      "source_node": "worklog:governance-engine-intent-and-anti-impulse-gate",
+      "target_node": "lesson:147-anti-sycophancy-and-distillation",
+      "relation_type": "related_to",
+      "confidence": 1.0,
+      "source_ref": "docs/lessons/147-anti-sycophancy-and-distillation.md"
+    }
+  ]
+}

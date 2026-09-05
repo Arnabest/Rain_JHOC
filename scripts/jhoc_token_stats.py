@@ -24,6 +24,11 @@ from jhoc.quota.antigravity_quota import (
     format_quota_markdown,
     get_antigravity_quota_live,
 )
+from jhoc.quota.api_balance import (
+    evaluate_api_balance_alert,
+    format_api_balance_markdown,
+    get_api_balances_live,
+)
 
 # CJK detection for token estimation
 CJK_RE = re.compile(r"[\u3000-\u9fff\uf900-\ufaff\uff00-\uffef]")
@@ -158,6 +163,10 @@ def main() -> int:
     quota_data = get_antigravity_quota_live(session_id=session_id)
     alert = evaluate_quota_alert(quota_data, threshold_pct=args.threshold)
 
+    # 1.1 Fetch API key balances
+    api_balances = get_api_balances_live()
+    api_alert = evaluate_api_balance_alert(api_balances)
+
     # 2. Analyze transcript metrics
     metrics = analyze_transcript(session_file, session_id)
     metrics["quota"] = quota_data
@@ -167,6 +176,13 @@ def main() -> int:
         "critical_buckets": list(alert.critical_buckets),
         "warning_message": alert.warning_message,
         "handover_recommended": alert.handover_recommended,
+    }
+    metrics["api_balances"] = {k: v.to_dict() for k, v in api_balances.items()}
+    metrics["api_alert"] = {
+        "is_critical": api_alert.is_critical,
+        "alert_level": api_alert.alert_level,
+        "critical_providers": list(api_alert.critical_providers),
+        "warning_message": api_alert.warning_message,
     }
     metrics["timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
@@ -189,12 +205,13 @@ def main() -> int:
             f"- 会话: `{session_id}` | API 调用 {metrics['api_calls']} 次 | 用户提问 {metrics['user_prompts']} 轮",
             f"- 模型: `{metrics['model_name']}`",
             format_quota_markdown(quota_data, alert),
+            format_api_balance_markdown(api_balances, api_alert),
             f"- 上下文总数 (估算): **{metrics['context_total']:,}** tokens",
             f"- 累计输入: {metrics['fresh_input']:,} | 累计输出: {metrics['output']:,}",
         ]
         print("\n".join(md_lines))
 
-    if args.check_alert and alert.is_critical:
+    if args.check_alert and (alert.is_critical or api_alert.is_critical):
         return 1
     return 0
 

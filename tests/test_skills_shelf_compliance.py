@@ -82,6 +82,7 @@ class TestSkillsShelfCompliance(unittest.TestCase):
         self.assertIn("latent-space-activator", content)
         self.assertIn("paper-to-knowledge-distiller", content)
         self.assertIn("token-stats", content)
+        self.assertIn("worklog-distiller", content)
         self.assertIn("核心工程与治理技能货架", content)
         self.assertIn("VERIFIED", content)
 
@@ -110,9 +111,12 @@ class TestSkillsShelfCompliance(unittest.TestCase):
 
         # 2. 领域业务技能必须位于 .agents/plugins/domain-*/skills，tier 为 domain
         if domain_skills:
-            self.assertEqual(len(domain_skills), 3)
+            self.assertEqual(len(domain_skills), 4)
             domain_names = {s.name for s in domain_skills}
-            self.assertEqual(domain_names, {"beautiful-article", "content-generative-harness", "web-video-presentation"})
+            self.assertEqual(
+                domain_names,
+                {"beautiful-article", "content-generative-harness", "web-video-presentation", "worklog-distiller"},
+            )
             for s in domain_skills:
                 self.assertEqual(s.skill_tier, "domain")
                 self.assertIn("plugins", str(s.path))

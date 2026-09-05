@@ -24,6 +24,7 @@ def provision_workspace(target_path: Path) -> int:
     slug = re.sub(r"[^\w\-]", "_", project_name).lower() or "external_project"
 
     # 1. Provision .agents/ directory and hooks.json
+    py_cmd = "py -3" if sys.platform == "win32" else "python3"
     agents_dir = target_root / ".agents"
     agents_dir.mkdir(parents=True, exist_ok=True)
     hooks_file = agents_dir / "hooks.json"
@@ -33,7 +34,7 @@ def provision_workspace(target_path: Path) -> int:
             "PreInvocation": [
                 {
                     "type": "command",
-                    "command": f'python "{JHOC_ROOT / "scripts" / "jhoc_pre_inject.py"}"',
+                    "command": f'{py_cmd} "{JHOC_ROOT / "scripts" / "jhoc_pre_inject.py"}"',
                     "timeout": 5,
                 }
             ],
@@ -43,7 +44,7 @@ def provision_workspace(target_path: Path) -> int:
                     "hooks": [
                         {
                             "type": "command",
-                            "command": f'python "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
+                            "command": f'{py_cmd} "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
                             "timeout": 5,
                         }
                     ],
@@ -53,7 +54,7 @@ def provision_workspace(target_path: Path) -> int:
                     "hooks": [
                         {
                             "type": "command",
-                            "command": f'python "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
+                            "command": f'{py_cmd} "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
                             "timeout": 5,
                         }
                     ],
@@ -63,7 +64,7 @@ def provision_workspace(target_path: Path) -> int:
                     "hooks": [
                         {
                             "type": "command",
-                            "command": f'python "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
+                            "command": f'{py_cmd} "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
                             "timeout": 5,
                         }
                     ],
@@ -73,7 +74,7 @@ def provision_workspace(target_path: Path) -> int:
                     "hooks": [
                         {
                             "type": "command",
-                            "command": f'python "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
+                            "command": f'{py_cmd} "{JHOC_ROOT / "scripts" / "jhoc_hook_gate.py"}"',
                             "timeout": 5,
                         }
                     ],
@@ -82,7 +83,7 @@ def provision_workspace(target_path: Path) -> int:
             "Stop": [
                 {
                     "type": "command",
-                    "command": f'python "{JHOC_ROOT / "scripts" / "jhoc_stop_guard.py"}"',
+                    "command": f'{py_cmd} "{JHOC_ROOT / "scripts" / "jhoc_stop_guard.py"}"',
                     "timeout": 5,
                 }
             ],

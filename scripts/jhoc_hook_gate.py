@@ -225,6 +225,96 @@ def _evaluate_inner(payload: dict, actor: str = "antigravity-ide", task_id: str 
                 "reason": "Concurrency Conflict: System write freeze is active during shougong verification. Code mutation is blocked.",
             }
 
+    # Check 0.1: Quota Critical Circuit Breaker (Fail-Closed)
+    if not payload.get("skip_quota_check") and not os.environ.get("JHOC_SKIP_QUOTA_CHECK"):
+        try:
+            if str(WORKSPACE_ROOT / "src") not in sys.path:
+                sys.path.insert(0, str(WORKSPACE_ROOT / "src"))
+            from jhoc.quota.antigravity_quota import evaluate_quota_alert, get_antigravity_quota_live
+            from jhoc.quota.api_balance import evaluate_api_balance_alert, get_api_balances_live
+
+            cid = payload.get("conversationId") or payload.get("session_id")
+            if not cid:
+                brain = Path.home() / ".gemini" / "antigravity-ide" / "brain"
+                if brain.is_dir():
+                    cand = sorted(brain.glob("*/.system_generated/logs/transcript.jsonl"), key=lambda f: f.stat().st_mtime, reverse=True)
+                    if cand:
+                        cid = cand[0].parent.parent.parent.name
+
+            quota_data = get_antigravity_quota_live(session_id=cid)
+            alert = evaluate_quota_alert(quota_data, threshold_pct=8.0)
+
+            api_balances = get_api_balances_live()
+            api_alert = evaluate_api_balance_alert(api_balances)
+
+            if alert.is_critical or api_alert.is_critical:
+                is_whitelisted = False
+                if tool_name in ("write_to_file", "replace_file_content", "multi_replace_file_content"):
+                    raw_tf = str(args.get("TargetFile", "") or args.get("path", "") or args.get("file", ""))
+                    tf = os.path.normpath(raw_tf).replace("\\", "/").lower()
+                    whitelist_targets = (
+                        "implementation_plan.md",
+                        "walkthrough.md",
+                        "memory/",
+                        "docs/lessons/",
+                        "docs/worklogs/",
+                        "logs/token-stats/",
+                        "logs/archive_payloads/",
+                        "logs/op-log/",
+                        "logs/co-review/",
+                        "runtime/",
+                    )
+                    if any(w in tf for w in whitelist_targets):
+                        is_whitelisted = True
+                elif tool_name == "run_command":
+                    raw_cmd = str(args.get("CommandLine", "") or args.get("command", "")).strip()
+                    cmd_norm = raw_cmd.replace("\\", "/").lower()
+                    whitelist_scripts = (
+                        "jhoc_shougong.py",
+                        "jhoc_token_stats.py",
+                        "jhoc_worklog.py",
+                        "jhoc_co_review.py",
+                        "jhoc_approve.py",
+                        "jhoc_state.py",
+                    )
+                    git_cmds = (
+                        "git status",
+                        "git add",
+                        "git commit",
+                        "git diff",
+                        "git log",
+                        "git branch",
+                        "git checkout",
+                        "git rev-parse",
+                    )
+                    if any(ws in cmd_norm for ws in whitelist_scripts) or any(gc in cmd_norm for gc in git_cmds):
+                        is_whitelisted = True
+
+                if not is_whitelisted:
+                    reasons: list[str] = []
+                    if alert.is_critical:
+                        reasons.append(f"IDE account '{alert.account_email}' quota <= 8% ({', '.join(alert.critical_buckets)})")
+                    if api_alert.is_critical:
+                        reasons.append(f"API balance critical: {api_alert.warning_message}")
+                    return {
+                        "decision": "deny",
+                        "reason": (
+                            f"[CRITICAL QUOTA & BALANCE FUSE] {'; '.join(reasons)}！"
+                            "外部 Harness 物理熔断已触发：除落盘保存 (implementation_plan/memory/lessons) "
+                            "与交接归档 (jhoc_shougong/token_stats/git) 外，阻断一切业务代码修改与命令执行，"
+                            "强制进入跨模型/跨账号交接流程。"
+                        ),
+                    }
+        except Exception as exc:
+            _record_blackbox_trace(
+                tool_name,
+                args,
+                "warn",
+                f"Quota probe non-fatal exception: {exc}",
+                actor=actor,
+                task_id=task_id,
+            )
+
     # Check 0.5: Multi-Model File Mutex Lease Check
     if tool_name in ("write_to_file", "replace_file_content", "multi_replace_file_content"):
         target_file = args.get("TargetFile", "")
@@ -356,6 +446,37 @@ def _evaluate_inner(payload: dict, actor: str = "antigravity-ide", task_id: str 
                     "decision": "deny",
                     "reason": f"Path validation error: {e}",
                 }
+
+        # Check 4.5: Pre-flight Inquiry Alignment Gate (Fail-Closed on unaligned major changes)
+        if not payload.get("skip_inquiry_check") and not os.environ.get("JHOC_SKIP_INQUIRY_CHECK"):
+            state_file = WORKSPACE_ROOT / "memory" / "v3_task_state.json"
+            if state_file.is_file():
+                try:
+                    task_st = json.loads(state_file.read_text(encoding="utf-8"))
+                    if task_st.get("status") == "ARMED" and task_st.get("inquiry_status") == "PENDING":
+                        raw_tf = str(args.get("TargetFile", "") or args.get("path", "") or args.get("file", ""))
+                        tf = os.path.normpath(raw_tf).replace("\\", "/").lower()
+                        inquiry_allow_targets = (
+                            "implementation_plan.md",
+                            "walkthrough.md",
+                            "memory/",
+                            "docs/",
+                            "logs/",
+                            "scratch/",
+                            "tests/",
+                        )
+                        if not any(w in tf for w in inquiry_allow_targets):
+                            return {
+                                "decision": "deny",
+                                "reason": (
+                                    "[INQUIRY PENDING GATE] Task inquiry probe is still PENDING. "
+                                    "You must align with user across 4 orthogonal dimensions and execute "
+                                    "'python scripts/jhoc_kaigong.py --title ... --inquiry-confirmed' "
+                                    "before mutating production source code."
+                                ),
+                            }
+                except Exception:
+                    pass
 
     # Check for run_command tool execution
     if tool_name == "run_command":

@@ -4,8 +4,15 @@
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python scripts/jhoc_pre_inject.py",
-        "timeout": 5
+        "command": "py -3 \"G:/JHOC/scripts/jhoc_pre_inject.py\"",
+        "timeout": 10
+      }
+    ],
+    "PostInvocation": [
+      {
+        "type": "command",
+        "command": "py -3 \"G:/JHOC/scripts/jhoc_post_verify.py\"",
+        "timeout": 10
       }
     ],
     "PreToolUse": [
@@ -14,8 +21,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/jhoc_hook_gate.py",
-            "timeout": 5
+            "command": "py -3 \"G:/JHOC/scripts/jhoc_hook_gate.py\"",
+            "timeout": 10
           }
         ]
       },
@@ -24,8 +31,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/jhoc_hook_gate.py",
-            "timeout": 5
+            "command": "py -3 \"G:/JHOC/scripts/jhoc_hook_gate.py\"",
+            "timeout": 10
           }
         ]
       },
@@ -34,8 +41,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/jhoc_hook_gate.py",
-            "timeout": 5
+            "command": "py -3 \"G:/JHOC/scripts/jhoc_hook_gate.py\"",
+            "timeout": 10
           }
         ]
       },
@@ -44,8 +51,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/jhoc_hook_gate.py",
-            "timeout": 5
+            "command": "py -3 \"G:/JHOC/scripts/jhoc_hook_gate.py\"",
+            "timeout": 10
           }
         ]
       }
@@ -53,8 +60,8 @@
     "Stop": [
       {
         "type": "command",
-        "command": "python scripts/jhoc_stop_guard.py",
-        "timeout": 5
+        "command": "py -3 \"G:/JHOC/scripts/jhoc_stop_guard.py\"",
+        "timeout": 10
       }
     ]
   }

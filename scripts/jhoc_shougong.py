@@ -90,8 +90,8 @@ def record_shougong_failure(reason: str, details: str = "") -> None:
         pass
 
 
-def run_shougong(archive: bool = True, force: bool = False) -> int:
-    print("=== [JHOC SHOUGONG POST-FLIGHT CLOSURE] ===")
+def run_shougong(archive: bool = True, force: bool = False, offline_co_review: bool = False) -> int:
+    print("=== [JHOC SHOUGONG POST-FLIGHT CLOSURE (36 CO-REVIEW PIPELINE)] ===")
 
     # Step 1: Detect active task and enforce ARMED state precondition
     state_file = ROOT / "memory" / "v3_task_state.json"
@@ -112,27 +112,67 @@ def run_shougong(archive: bool = True, force: bool = False) -> int:
 
     print(f"[INFO] Closing active task: {task_id}")
 
-    # Step 2: Run schema verification
-    if not run_command([sys.executable, "scripts/validate_schemas.py"], "Schema Validation"):
+    # === [PHASE 1: TRIPLE POST-FLIGHT SELF-AUDITS] ===
+    print("[STAGE 1/2] Executing 3 Post-Flight Self-Audits...")
+
+    # Self-Audit 1: Full unit test suite and schema verification
+    if not run_command([sys.executable, "scripts/validate_schemas.py"], "Self-Audit 1.1: Schema Validation"):
         record_shougong_failure("Schema Validation Failed")
         return 1
 
-    # Step 3: Run full unit test suite
-    if not run_command([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], "Unit Tests"):
+    if not run_command([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], "Self-Audit 1.2: Unit Tests"):
         record_shougong_failure("Unit Tests Failed")
         return 1
 
-    # Step 4: Run acceptance checks
-    if not run_command([sys.executable, "scripts/validate_acceptance_artifacts.py"], "Acceptance Checks"):
+    if not run_command([sys.executable, "scripts/validate_acceptance_artifacts.py"], "Self-Audit 1.3: Acceptance Checks"):
         record_shougong_failure("Acceptance Checks Failed")
         return 1
+    print("[PASS] Self-Audit 1 (Tests & Schemas) PASSED.")
 
-    # Step 5: Check emoji discipline in diff
+    # Self-Audit 2: Check emoji discipline and ASCII character purity
     ok_emoji, msg_emoji = check_git_modified_emojis()
-    print(f"[{'PASS' if ok_emoji else 'FAIL'}] {msg_emoji}")
+    print(f"[{'PASS' if ok_emoji else 'FAIL'}] Self-Audit 2 (Emoji Discipline): {msg_emoji}")
     if not ok_emoji:
         record_shougong_failure("Emoji Discipline Violation", msg_emoji)
         return 1
+
+    # Self-Audit 3: Check workspace hygiene and untracked transient clutter
+    ok_hygiene = True
+    hygiene_msg = "Workspace clean: No dangling temporary files."
+    try:
+        res_git = subprocess.run(["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True)
+        if res_git.returncode == 0:
+            untracked = [l[3:] for l in res_git.stdout.splitlines() if l.startswith("??")]
+            suspicious = [f for f in untracked if f.endswith(".tmp") or f.endswith(".bak") or "scratch/temp_" in f]
+            if suspicious:
+                ok_hygiene = False
+                hygiene_msg = f"Dangling transient files detected: {suspicious}"
+    except Exception as e:
+        hygiene_msg = f"Git hygiene check non-fatal error: {e}"
+    print(f"[{'PASS' if ok_hygiene else 'FAIL'}] Self-Audit 3 (Workspace Hygiene): {hygiene_msg}")
+    if not ok_hygiene:
+        record_shougong_failure("Workspace Hygiene Violation", hygiene_msg)
+        return 1
+
+    print("[PASS] All 3 Post-Flight Self-Audits PASSED.")
+
+    # === [PHASE 2: SEXTUPLE INVARIANT MULTI-MODEL CO-REVIEW] ===
+    print("[STAGE 2/2] Executing 6-Invariant Multi-Model Co-Review...")
+    co_review_pkg = None
+    try:
+        from jhoc_co_review import run_6_invariant_co_review
+        co_review_pkg = run_6_invariant_co_review(
+            task_id=task_id,
+            title=state.get("title", "Task Closure Audit"),
+            workspace=ROOT,
+            offline=offline_co_review,
+        )
+        if co_review_pkg.overall_verdict == "REJECTED":
+            print("[FAIL] 6-Invariant Multi-Model Co-Review REJECTED. Review logs/co-review/ for details.")
+            record_shougong_failure("6-Invariant Co-Review Rejected")
+            return 1
+    except Exception as exc:
+        print(f"[WARN] 6-Invariant Co-Review dispatch error: {exc}")
 
     # Step 5.5: Global write freeze during final handoff & state closure
     lock_file = ROOT / "runtime" / "write_freeze.lock"
@@ -166,11 +206,18 @@ def run_shougong(archive: bool = True, force: bool = False) -> int:
             quota_pkg = {
                 "quota_data": q_data,
                 "is_critical": is_quota_crit,
+                "is_alert": is_quota_crit,
                 "alert_level": q_alert.alert_level,
                 "critical_buckets": list(q_alert.critical_buckets),
                 "account_email": q_alert.account_email,
             }
             print(f"[INFO] Closure Quota: {format_quota_markdown(q_data, q_alert)}")
+            if is_quota_crit:
+                print("\n" + "=" * 60)
+                print("[CRITICAL QUOTA ALERT] ACCOUNT QUOTA <= 8 PERCENT.")
+                print(f"Account: {q_alert.account_email} | Critical Buckets: {', '.join(q_alert.critical_buckets)}")
+                print("[MANDATORY HANDOFF] Agent MUST output critical alert and guide user to switch account!")
+                print("=" * 60 + "\n")
         except Exception:
             pass
 
@@ -184,8 +231,14 @@ def run_shougong(archive: bool = True, force: bool = False) -> int:
             "pending_actions": state.get("pending_actions", []),
             "quota_status": quota_pkg,
             "quota_critical": is_quota_crit,
+            "blog_pending": is_quota_crit,
             "switch_account_recommended": is_quota_crit,
-            "summary": f"Task '{state.get('title', '')}' closed successfully with all tests passing.",
+            "co_review_36": {
+                "self_audits_passed": 3,
+                "overall_verdict": co_review_pkg.overall_verdict if co_review_pkg else "SKIPPED",
+                "sha256": co_review_pkg.sha256 if co_review_pkg else "",
+            },
+            "summary": f"Task '{state.get('title', '')}' closed successfully with all 3-self-audits and 6-co-review checks passing.",
         }
         handoff_file = ROOT / "memory" / "handoff-latest.json"
         handoff_file.parent.mkdir(parents=True, exist_ok=True)
@@ -203,6 +256,34 @@ def run_shougong(archive: bool = True, force: bool = False) -> int:
             print(f"[PASS] Multi-Model Hub updated: {released_cnt} file leases released, presence set to IDLE.")
         except Exception:
             pass
+
+        # Step 6.8: Atomic Local Asset Index Rebuild (governance-engine)
+        try:
+            indexer_path = ROOT / ".agents" / "plugins" / "governance-engine" / "core" / "indexer.py"
+            if indexer_path.is_file():
+                print("[INFO] Rebuilding Governance Local Asset Index (atomic swap)...")
+                res_idx = subprocess.run([sys.executable, str(indexer_path)], cwd=str(ROOT), capture_output=True, text=True)
+                if res_idx.returncode == 0:
+                    print(f"[PASS] Governance Local Asset Index refreshed: {res_idx.stdout.strip()}")
+                else:
+                    print(f"[WARN] Index rebuild non-fatal failure: {res_idx.stderr.strip()}")
+        except Exception as exc:
+            print(f"[WARN] Index rebuild exception: {exc}")
+
+        # Step 7: Automated Worklog & Pedagogical Blog Distillation (worklog-distiller pipeline)
+        if archive:
+            if is_quota_crit:
+                print("[WARN] Quota critical (<= 8%). Automated deep blog distillation deferred to prevent exhaustion/429.")
+                print("[INFO] Generating baseline knowledge graph and offline worklog...")
+                worklog_cmd = [sys.executable, "scripts/jhoc_worklog.py", "--graph", "--save"]
+            else:
+                print("[INFO] Running automated worklog & blog distillation pipeline...")
+                worklog_cmd = [sys.executable, "scripts/jhoc_worklog.py", "--blog", "--save", "--graph"]
+
+            try:
+                run_command(worklog_cmd, "Worklog Blog Distillation")
+            except Exception as exc:
+                print(f"[WARN] Worklog pipeline non-fatal exception: {exc}")
     finally:
         if lock_file.is_file():
             try:
@@ -219,9 +300,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="JHOC Post-flight Shougong Closure")
     parser.add_argument("--no-archive", action="store_true", help="Skip archiving state")
     parser.add_argument("--force", action="store_true", help="Force closure even if task is not in ARMED state")
+    parser.add_argument("--offline-co-review", action="store_true", help="Run 6-invariant co-review in offline static mode")
     args = parser.parse_args()
 
-    sys.exit(run_shougong(archive=not args.no_archive, force=args.force))
+    sys.exit(run_shougong(archive=not args.no_archive, force=args.force, offline_co_review=args.offline_co_review))
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -24,12 +25,24 @@ class TestSkillConcurrencyAndLifecycle(unittest.TestCase):
         self.lock_file = ROOT / "runtime" / "write_freeze.lock"
         if self.lock_file.is_file():
             self.lock_file.unlink()
+        self._reset_hub_presence()
 
     def tearDown(self) -> None:
         if self.orig_state is not None:
             self.state_file.write_text(self.orig_state, encoding="utf-8")
         if self.lock_file.is_file():
             self.lock_file.unlink()
+        self._reset_hub_presence()
+
+    def _reset_hub_presence(self) -> None:
+        hub_db = ROOT / "logs" / "p19-hub.sqlite"
+        if hub_db.is_file():
+            try:
+                from jhoc.hub import JHOCMultiModelHub, ModelPresenceState
+                hub = JHOCMultiModelHub(hub_db)
+                hub.register_presence("antigravity-ide", ModelPresenceState.IDLE)
+            except Exception:
+                pass
 
     def test_kaigong_reentrance_preserves_baseline_sha(self) -> None:
         # 1. Arm task with explicit baseline
@@ -120,7 +133,25 @@ class TestSkillConcurrencyAndLifecycle(unittest.TestCase):
             msg = res["injectSteps"][0]["ephemeralMessage"]
             self.assertIn("CRITICAL QUOTA ALERT", msg)
 
+    @unittest.mock.patch("jhoc.quota.antigravity_quota.get_antigravity_quota_live")
+    def test_kaigong_quota_critical_denies_without_force(self, mock_quota) -> None:
+        mock_quota.return_value = {
+            "enabled": True,
+            "account_email": "fuse_test@gmail.com",
+            "gemini_5h_pct": 2,
+            "gemini_5h_reset": "~1h",
+            "gemini_weekly_pct": 50,
+        }
+        # 1. Without force: MUST DENY (returncode 1)
+        code1 = run_kaigong("Task on Low Quota", workspace=ROOT, force=False)
+        self.assertEqual(code1, 1)
+
+        # 2. With force: ALLOWED (returncode 0)
+        code2 = run_kaigong("Task on Low Quota Forced", workspace=ROOT, force=True)
+        self.assertEqual(code2, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
+
 

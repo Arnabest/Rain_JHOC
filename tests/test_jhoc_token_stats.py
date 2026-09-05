@@ -123,6 +123,36 @@ class TestJhocTokenStats(unittest.TestCase):
         self.assertEqual(res["session_id"], "dummy_session")
         self.assertEqual(res["api_calls"], 0)
 
+    def test_evaluate_api_balance_alert_healthy(self) -> None:
+        from jhoc.quota.api_balance import APIKeyBalance, evaluate_api_balance_alert, format_api_balance_markdown
+        balances = {
+            "DeepSeek": APIKeyBalance("DeepSeek", "CNY", 30.0, is_available=True, status="healthy"),
+            "OpenRouter": APIKeyBalance("OpenRouter", "USD", 10.0, is_available=True, status="healthy"),
+        }
+        alert = evaluate_api_balance_alert(balances)
+        self.assertFalse(alert.is_critical)
+        self.assertEqual(alert.alert_level, "OK")
+        md = format_api_balance_markdown(balances, alert)
+        self.assertIn("30.00 CNY", md)
+        self.assertIn("10.00 USD", md)
+        self.assertIn("(充足)", md)
+
+    def test_evaluate_api_balance_alert_critical(self) -> None:
+        from jhoc.quota.api_balance import APIKeyBalance, evaluate_api_balance_alert, format_api_balance_markdown
+        balances = {
+            "DeepSeek": APIKeyBalance("DeepSeek", "CNY", 0.5, is_available=True, status="critical"),
+            "OpenRouter": APIKeyBalance("OpenRouter", "USD", 10.0, is_available=True, status="healthy"),
+        }
+        alert = evaluate_api_balance_alert(balances, threshold_cny=2.0)
+        self.assertTrue(alert.is_critical)
+        self.assertEqual(alert.alert_level, "CRITICAL")
+        self.assertIn("DeepSeek", alert.critical_providers)
+        self.assertIn("[CRITICAL API KEY BALANCE ALERT]", alert.warning_message)
+        md = format_api_balance_markdown(balances, alert)
+        self.assertIn("0.50 CNY (告急)", md)
+        self.assertIn("[WARN: 需及时充值]", md)
+
 
 if __name__ == "__main__":
     unittest.main()
+
