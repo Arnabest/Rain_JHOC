@@ -1,0 +1,58 @@
+{
+  "schema_version": "jhoc-memory-catalog/v1",
+  "generated_at": "2026-09-04T00:00:00Z",
+  "total_records": 4,
+  "tier_summary": {
+    "L1": 1,
+    "L2": 3,
+    "L3": 0
+  },
+  "domain_summary": {
+    "Governance & Constitution": 1,
+    "Network & Proxy Routing": 1,
+    "Multi-Model & Provider Interop": 1,
+    "Architecture & Infrastructure": 1
+  },
+  "records": [
+    {
+      "record_id": "core:jhoc-constitution",
+      "tier": "L1",
+      "domain": "Governance & Constitution",
+      "title": "JHOC Agent Operating Core Constitution (Rule 0-7)",
+      "abstract": "Supreme behavioral invariants and zero-trust engineering boundaries governing all autonomous agents.",
+      "relative_path": "AGENTS.md",
+      "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sensitivity": "PUBLIC"
+    },
+    {
+      "record_id": "core:network-proxy-routing",
+      "tier": "L2",
+      "domain": "Network & Proxy Routing",
+      "title": "\u6392\u67e5\u7f51\u7edc\u4ee3\u7406\u4e0e urllib \u73af\u5883\u53d8\u91cf\u914d\u7f6e\u89c4\u8303",
+      "abstract": "Deterministic socket polling and proxy routing invariants across autonomous runtimes.",
+      "relative_path": "docs/architecture/network-proxy-spec.md",
+      "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sensitivity": "PUBLIC"
+    },
+    {
+      "record_id": "core:multi-model-hub",
+      "tier": "L2",
+      "domain": "Multi-Model & Provider Interop",
+      "title": "\u591a\u6a21\u578b\u534f\u540c\u5206\u53d1\u4e0e provider \u72b6\u6001\u673a\u7ba1\u7406",
+      "abstract": "Bearer-tokenized file mutex lease locking and message envelope routing across Antigravity, Claude, and Codex.",
+      "relative_path": "src/jhoc/hub/store.py",
+      "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sensitivity": "PUBLIC"
+    },
+    {
+      "record_id": "core:architecture-infrastructure",
+      "tier": "L2",
+      "domain": "Architecture & Infrastructure",
+      "title": "\u7cfb\u7edf\u91cd\u6784\u4e0e\u5fae\u5185\u6838\u67b6\u6784\u8bbe\u8ba1\u539f\u5219",
+      "abstract": "Dual-plane physical isolation, anti-self-mutation, and five-tuple blackbox hash chaining.",
+      "relative_path": "src/jhoc/supervisor.py",
+      "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sensitivity": "PUBLIC"
+    }
+  ]
+}

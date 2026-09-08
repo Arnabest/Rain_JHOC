@@ -1,0 +1,16 @@
+{
+  "name": "domain-content",
+  "version": "1.0.0",
+  "description": "JHOC Domain Content Generation Suite: rich article styling, web video presentations, and generative harness methodologies.",
+  "author": {
+    "name": "JHOC Contributor"
+  },
+  "license": "MIT",
+  "keywords": [
+    "content-generation",
+    "web-video",
+    "reacticle",
+    "beautiful-article",
+    "domain-skills"
+  ]
+}

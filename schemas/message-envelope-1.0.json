@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "jhoc://schemas/message-envelope/1.0",
+  "title": "JHOC MessageEnvelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "message_id", "message_type", "channel", "producer", "payload", "correlation_id", "occurred_at", "delivery"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "message_id": {"type": "string", "format": "uuid"},
+    "message_type": {"enum": ["command", "event", "query"]},
+    "channel": {"type": "string", "minLength": 1},
+    "producer": {"type": "string", "minLength": 1},
+    "payload": {"type": "object"},
+    "correlation_id": {"type": "string", "format": "uuid"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "delivery": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempt", "max_attempts", "lease_id"],
+      "properties": {
+        "attempt": {"type": "integer", "minimum": 0},
+        "max_attempts": {"type": "integer", "minimum": 1},
+        "lease_id": {"anyOf": [{"type": "string"}, {"type": "null"}]}
+      }
+    }
+  }
+}
+

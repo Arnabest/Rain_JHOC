@@ -1,0 +1,16 @@
+{
+  "name": "governance-engine",
+  "version": "1.0.0",
+  "description": "JHOC 跨宿主意图提炼、本地资产倒排索引与分段冲动矫正治理引擎",
+  "author": {
+    "name": "JHOC Kernel Core"
+  },
+  "license": "MIT",
+  "keywords": [
+    "governance",
+    "intent-classification",
+    "asset-indexing",
+    "phased-impulse-gating",
+    "anti-hallucination"
+  ]
+}

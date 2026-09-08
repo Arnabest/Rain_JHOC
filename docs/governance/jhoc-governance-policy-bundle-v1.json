@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "bundle_version": "jhoc-governance-v1.0",
+  "bundle_source": "jhoc://v5/plan/governance",
+  "rules_count": 6,
+  "rules": [
+    {
+      "rule_id": "RULE_READ_ONLY_SAFE",
+      "effect": "ALLOW",
+      "operations": [
+        "check_status",
+        "inspect_graph",
+        "query_memory",
+        "read_file",
+        "read_knowledge",
+        "read_provenance"
+      ],
+      "priority": 10,
+      "max_risk_level": 1
+    },
+    {
+      "rule_id": "RULE_ONLINE_QUERY_SAFE",
+      "effect": "ALLOW",
+      "operations": [
+        "http_fetch",
+        "model_query",
+        "web_search"
+      ],
+      "priority": 10,
+      "max_risk_level": 2
+    },
+    {
+      "rule_id": "RULE_MUTATION_APPROVAL_REQUIRED",
+      "effect": "REQUIRE_APPROVAL",
+      "operations": [
+        "delete_file",
+        "deploy",
+        "git_commit",
+        "mutate_code",
+        "run_terminal",
+        "system_change"
+      ],
+      "priority": 50,
+      "max_risk_level": 4
+    },
+    {
+      "rule_id": "RULE_DENY_LEGACY_RUNTIME",
+      "effect": "DENY",
+      "operations": [
+        "legacy_audio_record",
+        "legacy_bus_connect",
+        "legacy_profile_mount",
+        "legacy_script_exec"
+      ],
+      "priority": 100,
+      "max_risk_level": 4
+    },
+    {
+      "rule_id": "RULE_DENY_POLICY_MUTATION",
+      "effect": "DENY",
+      "operations": [
+        "alter_policy_bundle",
+        "modify_guard_rule",
+        "override_security_gate"
+      ],
+      "priority": 100,
+      "max_risk_level": 4
+    },
+    {
+      "rule_id": "RULE_DENY_RAW_SECRETS",
+      "effect": "DENY",
+      "operations": [
+        "dump_credentials",
+        "export_raw_token",
+        "print_api_key"
+      ],
+      "priority": 100,
+      "max_risk_level": 4
+    }
+  ],
+  "evaluations_verified": {
+    "read_knowledge": "ALLOW",
+    "mutate_code": "REQUIRE_APPROVAL",
+    "legacy_bus_connect": "DENY",
+    "print_api_key": "DENY"
+  },
+  "all_checks_passed": true,
+  "generated_at_utc": "2026-09-02T16:35:17.738328+00:00"
+}
